@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Central de Gestão Digital — E.M. Regina Celi</title>
+<style>
+:root{
+  --verde:#1b4332;--verde2:#2d6a4f;--verde3:#40916c;--verde4:#d8f3dc;
+  --ouro:#c9a227;--ouro2:#f4e4a6;
+  --ink:#0d1b2a;--muted:#4a5568;--bg:#f0f2ee;--white:#ffffff;
+  --warn:#e76f51;--line:#d1d9cc;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+
+/* ── TELA DE LOGIN ── */
+#login-screen{
+  position:fixed;inset:0;background:linear-gradient(145deg,var(--verde) 0%,var(--verde2) 60%,var(--verde3) 100%);
+  display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;
+}
+.login-box{
+  background:#fff;border-radius:20px;padding:44px 36px;max-width:400px;width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center;
+}
+.login-logo{font-size:2.8rem;margin-bottom:8px}
+.login-escola{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--verde3);margin-bottom:4px}
+.login-box h1{font-size:1.3rem;font-weight:800;color:var(--verde);margin-bottom:4px}
+.login-box p{font-size:.84rem;color:var(--muted);margin-bottom:28px}
+.login-box input{
+  width:100%;border:2px solid var(--line);border-radius:10px;padding:12px 16px;
+  font-size:1rem;text-align:center;letter-spacing:4px;color:var(--ink);
+  transition:border-color .2s;outline:none;
+}
+.login-box input:focus{border-color:var(--verde3)}
+.login-btn{
+  width:100%;margin-top:14px;background:var(--verde);color:#fff;border:none;
+  border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;
+  transition:background .2s;
+}
+.login-btn:hover{background:var(--verde2)}
+.login-erro{display:none;background:#fee2e2;color:#b91c1c;border-radius:8px;
+  padding:9px 14px;font-size:.84rem;margin-top:12px;font-weight:600}
+
+/* ── APP ── */
+#app{display:none}
+
+/* ── HEADER ── */
+header{
+  background:linear-gradient(135deg,var(--verde) 0%,var(--verde2) 100%);
+  padding:0 24px;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 12px rgba(0,0,0,.2);
+}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:14px 0}
+.header-logo{font-size:1.6rem}
+.header-txt h1{font-size:1rem;font-weight:800;color:#fff}
+.header-txt p{font-size:.75rem;color:rgba(255,255,255,.75)}
+.header-spacer{flex:1}
+nav{display:flex;gap:4px}
+.nav-btn{
+  background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;
+  padding:8px 14px;font-size:.8rem;font-weight:600;cursor:pointer;
+  transition:background .2s;white-space:nowrap;
+}
+.nav-btn:hover,.nav-btn.ativa{background:rgba(255,255,255,.3)}
+.nav-btn.sair{background:rgba(231,111,81,.4)}
+.nav-btn.sair:hover{background:rgba(231,111,81,.7)}
+
+/* ── TABS ── */
+.tab-content{display:none;max-width:1100px;margin:0 auto;padding:28px 20px}
+.tab-content.ativa{display:block}
+
+/* ── SEÇÃO TITLE ── */
+.sec-title{margin-bottom:24px}
+.sec-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--verde3);margin-bottom:4px}
+.sec-title h2{font-size:1.5rem;font-weight:800;color:var(--verde)}
+.sec-title p{font-size:.88rem;color:var(--muted);margin-top:4px}
+
+/* ── GRID DE PLATAFORMAS ── */
+.plat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.plat-card{
+  background:var(--white);border-radius:14px;padding:22px;
+  border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.06);
+  display:flex;flex-direction:column;gap:10px;transition:box-shadow .2s,transform .2s;
+}
+.plat-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1);transform:translateY(-2px)}
+.plat-card-top{display:flex;align-items:flex-start;gap:12px}
+.plat-ico{font-size:2rem;flex-shrink:0}
+.plat-info h3{font-size:.95rem;font-weight:700;color:var(--verde);margin-bottom:2px}
+.plat-info p{font-size:.78rem;color:var(--muted);line-height:1.5}
+.plat-tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{display:inline-block;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px}
+.tag.dir{background:var(--verde4);color:var(--verde)}
+.tag.fam{background:#dbeafe;color:#1e40af}
+.tag.sec{background:#f3e8ff;color:#6b21a8}
+.tag.mon{background:#fef9c3;color:#854d0e}
+.plat-links{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.plat-link{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;
+  background:var(--verde4);text-decoration:none;font-size:.8rem;font-weight:600;color:var(--verde);
+  transition:background .15s;
+}
+.plat-link:hover{background:#b7e4c7}
+.plat-link span{flex:1}
+.plat-link .arr{font-size:.7rem;opacity:.7}
+
+/* ── GRID DE REPOSITÓRIOS ── */
+.repo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.repo-card{
+  background:var(--white);border-radius:12px;padding:20px;border:1px solid var(--line);
+  box-shadow:0 1px 6px rgba(0,0,0,.05);
+}
+.repo-card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.repo-ico{font-size:1.4rem}
+.repo-card h3{font-size:.9rem;font-weight:700;color:var(--verde)}
+.repo-card p{font-size:.78rem;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.repo-link{
+  display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:#fff;
+  padding:7px 14px;border-radius:8px;font-size:.78rem;font-weight:600;text-decoration:none;
+  transition:background .2s;
+}
+.repo-link:hover{background:var(--verde2)}
+.repo-link-gh{background:var(--verde);margin-right:6px}
+
+/* ── TUTORIAIS ── */
+.tut-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.tut-card{
+  background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--line);
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.tut-card h3{font-size:1rem;font-weight:700;color:var(--verde);margin-bottom:6px}
+.tut-card p{font-size:.82rem;color:var(--muted);margin-bottom:14px;line-height:1.6}
+.tut-perfis{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.tut-btn{
+  display:inline-block;background:var(--verde);color:#fff;padding:9px 18px;border-radius:8px;
+  font-size:.82rem;font-weight:700;text-decoration:none;margin-right:6px;transition:background .2s;
+}
+.tut-btn:hover{background:var(--verde2)}
+.tut-btn.sec{background:var(--muted)}
+.tut-btn.sec:hover{background:#374151}
+
+/* ── MENSAGENS ── */
+.msg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.msg-card{
+  background:var(--white);border-radius:14px;border:1px solid var(--line);
+  box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;
+}
+.msg-header{padding:16px 20px;display:flex;align-items:center;gap:10px}
+.msg-header h3{font-size:.9rem;font-weight:700;color:#fff;flex:1}
+.msg-header .ico{font-size:1.2rem}
+.msg-body{padding:18px 20px}
+.msg-dest{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.msg-preview{font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;
+  white-space:pre-line;max-height:120px;overflow:hidden;position:relative}
+.msg-preview::after{content:'';position:absolute;bottom:0;left:0;right:0;
+  height:40px;background:linear-gradient(transparent,var(--white))}
+.msg-btn-ver{
+  background:none;border:1.5px solid var(--line);border-radius:8px;padding:7px 14px;
+  font-size:.78rem;font-weight:600;color:var(--muted);cursor:pointer;margin-right:8px;
+  transition:all .2s;
+}
+.msg-btn-ver:hover{border-color:var(--verde3);color:var(--verde3)}
+.msg-btn-copiar{
+  background:var(--verde);color:#fff;border:none;border-radius:8px;padding:7px 16px;
+  font-size:.78rem;font-weight:700;cursor:pointer;transition:background .2s;
+}
+.msg-btn-copiar:hover{background:var(--verde2)}
+.msg-full{display:none;margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+.msg-full-txt{font-size:.82rem;color:var(--ink);line-height:1.8;white-space:pre-line;
+  background:var(--bg);border-radius:8px;padding:14px;max-height:400px;overflow-y:auto}
+.copiado{display:inline-block;font-size:.72rem;color:var(--verde3);margin-left:8px;font-weight:600;opacity:0;transition:opacity .3s}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;
+  align-items:center;justify-content:center;padding:20px}
+.modal-overlay.aberto{display:flex}
+.modal-box{background:#fff;border-radius:16px;max-width:720px;width:100%;
+  max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-top{display:flex;align-items:center;gap:12px;padding:20px 24px;
+  border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:1}
+.modal-top h2{font-size:1rem;font-weight:700;color:var(--verde);flex:1}
+.modal-fechar{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted);padding:4px}
+.modal-corpo{padding:24px}
+.modal-secao{margin-bottom:22px}
+.modal-secao h3{font-size:.88rem;font-weight:700;color:var(--verde);margin-bottom:8px;
+  padding-bottom:4px;border-bottom:1px solid var(--verde4)}
+.modal-secao p,.modal-secao li{font-size:.84rem;color:var(--ink);line-height:1.7}
+.modal-secao ul{padding-left:18px}
+.modal-secao li{margin-bottom:4px}
+.senha-box{background:var(--verde4);border-radius:8px;padding:10px 14px;
+  font-size:.84rem;color:var(--verde);font-weight:600;display:flex;align-items:center;gap:8px}
+
+/* ── EDITOR ── */
+.editor-container{background:var(--white);border-radius:14px;padding:28px;border:1px solid var(--line)}
+.editor-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.ed-tab{padding:8px 18px;border-radius:8px;border:1.5px solid var(--line);background:transparent;
+  font-size:.82rem;font-weight:600;cursor:pointer;color:var(--muted);transition:all .2s}
+.ed-tab.ativo{background:var(--verde);color:#fff;border-color:var(--verde)}
+.ed-section{display:none}
+.ed-section.ativo{display:block}
+.form-row{margin-bottom:14px}
+.form-row label{display:block;font-size:.78rem;font-weight:700;color:var(--verde);margin-bottom:4px;
+  text-transform:uppercase;letter-spacing:.5px}
+.form-row input,.form-row textarea,.form-row select{
+  width:100%;border:1.5px solid var(--line);border-radius:8px;padding:9px 12px;
+  font-size:.84rem;color:var(--ink);outline:none;transition:border-color .2s;font-family:inherit;
+}
+.form-row input:focus,.form-row textarea:focus,.form-row select:focus{border-color:var(--verde3)}
+.form-row textarea{resize:vertical;min-height:80px}
+.btn-salvar{background:var(--verde);color:#fff;border:none;border-radius:8px;padding:10px 22px;
+  font-size:.88rem;font-weight:700;cursor:pointer;transition:background .2s}
+.btn-salvar:hover{background:var(--verde2)}
+.btn-remover{background:#fee2e2;color:#b91c1c;border:none;border-radius:6px;padding:5px 12px;
+  font-size:.75rem;font-weight:600;cursor:pointer;margin-left:8px}
+.item-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.item-row{display:flex;align-items:center;background:var(--bg);border-radius:8px;
+  padding:10px 14px;gap:10px;border:1px solid var(--line)}
+.item-row .nome{flex:1;font-size:.84rem;font-weight:600;color:var(--ink)}
+.item-row .detalhe{font-size:.76rem;color:var(--muted)}
+.aviso-salvo{display:none;font-size:.8rem;color:var(--verde3);font-weight:600;margin-left:10px}
+
+/* ── FOOTER ── */
+footer{background:var(--verde);color:rgba(255,255,255,.7);text-align:center;
+  padding:20px;font-size:.75rem;margin-top:40px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  nav{display:none}
+  .plat-grid,.repo-grid,.tut-grid,.msg-grid{grid-template-columns:1fr}
+  .tab-content{padding:20px 14px}
+  .header-inner{padding:10px 0}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     TELA DE LOGIN
+═══════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">🏫</div>
+    <div class="login-escola">E.M. Regina Celi da Silva Cerdeira</div>
+    <h1>Central de Gestão Digital</h1>
+    <p>Acesso exclusivo · Equipe Diretiva</p>
+    <input type="password" id="senha-input" placeholder="••••••••" maxlength="20"
+      onkeydown="if(event.key==='Enter')tentarLogin()">
+    <button class="login-btn" onclick="tentarLogin()">🔐 Acessar</button>
+    <div class="login-erro" id="login-erro">Senha incorreta. Tente novamente.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     APLICAÇÃO PRINCIPAL
+═══════════════════════════════════════════ -->
+<div id="app">
+
+<header>
+  <div class="header-inner">
+    <div class="header-logo">🏫</div>
+    <div class="header-txt">
+      <h1>Central de Gestão Digital</h1>
+      <p>E.M. Regina Celi da Silva Cerdeira · Equipe Diretiva</p>
+    </div>
+    <div class="header-spacer"></div>
+    <nav>
+      <button class="nav-btn ativa" onclick="irTab('plataformas',this)">🌐 Plataformas</button>
+      <button class="nav-btn" onclick="irTab('repositorios',this)">📁 Repositórios</button>
+      <button class="nav-btn" onclick="irTab('tutoriais',this)">📋 Tutoriais</button>
+      <button class="nav-btn" onclick="irTab('mensagens',this)">💬 Mensagens</button>
+      <button class="nav-btn" onclick="irTab('editor',this)">✏️ Editor</button>
+      <button class="nav-btn sair" onclick="sair()">Sair</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══ TAB: PLATAFORMAS ═══ -->
+<div id="tab-plataformas" class="tab-content ativa">
+  <div class="sec-title">
+    <div class="sec-label">Acesso rápido</div>
+    <h2>Plataformas e Sistemas</h2>
+    <p>Clique em qualquer link para abrir a plataforma em nova aba.</p>
+  </div>
+  <div class="plat-grid" id="grid-plataformas"></div>
+</div>
+
+<!-- ═══ TAB: REPOSITÓRIOS ═══ -->
+<div id="tab-repositorios" class="tab-content">
+  <div class="sec-title">
+    <div class="sec-label">GitHub / Vercel / Supabase</div>
+    <h2>Repositórios e Painéis de Código</h2>
+    <p>Acesso direto a todos os repositórios e dashboards de infraestrutura.</p>
+  </div>
+  <div class="repo-grid" id="grid-repositorios"></div>
+</div>
+
+<!-- ═══ TAB: TUTORIAIS ═══ -->
+<div id="tab-tutoriais" class="tab-content">
+  <div class="sec-title">
+    <div class="sec-label">Documentação</div>
+    <h2>Tutoriais de Uso dos Sistemas</h2>
+    <p>Guias oficiais para cada plataforma. Acessíveis por qualquer dispositivo.</p>
+  </div>
+  <div class="tut-grid" id="grid-tutoriais"></div>
+</div>
+
+<!-- ═══ TAB: MENSAGENS ═══ -->
+<div id="tab-mensagens" class="tab-content">
+  <div class="sec-title">
+    <div class="sec-label">Comunicação</div>
+    <h2>Mensagens Instrucionais de Acesso</h2>
+    <p>Mensagens prontas para enviar a cada público. Clique em <strong>Copiar</strong> e cole no WhatsApp ou e-mail.</p>
+  </div>
+  <div class="msg-grid" id="grid-mensagens"></div>
+</div>
+
+<!-- ═══ TAB: EDITOR ═══ -->
+<div id="tab-editor" class="tab-content">
+  <div class="sec-title">
+    <div class="sec-label">Administração</div>
+    <h2>Editor da Central</h2>
+    <p>Adicione, edite ou remova plataformas, tutoriais e mensagens. As alterações ficam salvas localmente.</p>
+  </div>
+  <div class="editor-container">
+    <div class="editor-tabs">
+      <button class="ed-tab ativo" onclick="irEdTab('ed-plat',this)">🌐 Plataformas</button>
+      <button class="ed-tab" onclick="irEdTab('ed-repo',this)">📁 Repositórios</button>
+      <button class="ed-tab" onclick="irEdTab('ed-tut',this)">📋 Tutoriais</button>
+      <button class="ed-tab" onclick="irEdTab('ed-msg',this)">💬 Mensagens</button>
+      <button class="ed-tab" onclick="irEdTab('ed-config',this)">⚙️ Configurações</button>
+    </div>
+
+    <!-- Editor: Plataformas -->
+    <div id="ed-plat" class="ed-section ativo">
+      <h3 style="font-size:.9rem;color:var(--verde);margin-bottom:14px">Plataformas cadastradas</h3>
+      <div class="item-list" id="ed-list-plat"></div>
+      <button class="btn-salvar" style="background:var(--verde3)" onclick="abrirModalNova('plat')">+ Nova plataforma</button>
+    </div>
+
+    <!-- Editor: Repositórios -->
+    <div id="ed-repo" class="ed-section">
+      <h3 style="font-size:.9rem;color:var(--verde);margin-bottom:14px">Repositórios cadastrados</h3>
+      <div class="item-list" id="ed-list-repo"></div>
+      <button class="btn-salvar" style="background:var(--verde3)" onclick="abrirModalNova('repo')">+ Novo repositório</button>
+    </div>
+
+    <!-- Editor: Tutoriais -->
+    <div id="ed-tut" class="ed-section">
+      <h3 style="font-size:.9rem;color:var(--verde);margin-bottom:14px">Tutoriais cadastrados</h3>
+      <div class="item-list" id="ed-list-tut"></div>
+      <button class="btn-salvar" style="background:var(--verde3)" onclick="abrirModalNova('tut')">+ Novo tutorial</button>
+    </div>
+
+    <!-- Editor: Mensagens -->
+    <div id="ed-msg" class="ed-section">
+      <h3 style="font-size:.9rem;color:var(--verde);margin-bottom:14px">Mensagens cadastradas</h3>
+      <div class="item-list" id="ed-list-msg"></div>
+      <button class="btn-salvar" style="background:var(--verde3)" onclick="abrirModalNova('msg')">+ Nova mensagem</button>
+    </div>
+
+    <!-- Editor: Config -->
+    <div id="ed-config" class="ed-section">
+      <div class="form-row">
+        <label>Alterar senha de acesso</label>
+        <input type="password" id="nova-senha" placeholder="Nova senha">
+      </div>
+      <div class="form-row">
+        <input type="password" id="confirmar-senha" placeholder="Confirmar nova senha">
+      </div>
+      <button class="btn-salvar" onclick="alterarSenha()">Salvar nova senha</button>
+      <span id="msg-senha" class="aviso-salvo">✓ Senha alterada!</span>
+      <hr style="margin:24px 0;border:none;border-top:1px solid var(--line)">
+      <button class="btn-salvar" style="background:#e76f51" onclick="if(confirm('Resetar todos os dados para o padrão?'))resetarDados()">
+        ⚠️ Restaurar dados padrão
+      </button>
+    </div>
+  </div>
+</div>
+
+</div><!-- fim #app -->
+
+<!-- ═══ MODAL ═══ -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)fecharModal()">
+  <div class="modal-box">
+    <div class="modal-top">
+      <span id="modal-ico" style="font-size:1.4rem"></span>
+      <h2 id="modal-titulo">Detalhes</h2>
+      <button class="modal-fechar" onclick="fecharModal()">✕</button>
+    </div>
+    <div class="modal-corpo" id="modal-corpo"></div>
+  </div>
+</div>
+
+<footer>
+  Central de Gestão Digital · E.M. Regina Celi da Silva Cerdeira · Centro de Referência em Educação Inclusiva<br>
+  Duque de Caxias, Rio de Janeiro · 2026 · Uso interno exclusivo
+</footer>
+
+<script>
+// ═══════════════════════════════════════════
+// DADOS PADRÃO
+// ═══════════════════════════════════════════
+
+const DADOS_PADRAO = {
+  senha: "direcao2026",
+
+  plataformas: [
+    {
+      id:"p1", ico:"📣", nome:"Painel Pedagógico Administrativo",
+      desc:"Painel de recepção com slides rotativos, informes e comunicados institucionais transmitidos para a TV da escola.",
+      tags:["dir","sec"],
+      links:[
+        {label:"🖥️ Painel Principal (TV)", url:"https://emreginacelicr25-code.github.io/painel-recepcao/"},
+        {label:"🏠 Painel das Famílias", url:"https://emreginacelicr25-code.github.io/painel-recepcao/familias.html"},
+        {label:"✏️ Editor de Conteúdo", url:"https://emreginacelicr25-code.github.io/painel-recepcao/editor.html"}
+      ]
+    },
+    {
+      id:"p2", ico:"📋", nome:"Central de Triagem — Registros e Encaminhamentos",
+      desc:"Sistema de triagem, registro de atendimentos, encaminhamentos e fila de impressão com gestão de cotas por turma.",
+      tags:["dir","sec"],
+      links:[
+        {label:"📋 Central de Triagem", url:"https://emreginacelicr25-code.github.io/rcsc-triagem/"},
+        {label:"🖨️ Fila de Impressão", url:"https://emreginacelicr25-code.github.io/rcsc-triagem/impressao.html"}
+      ]
+    },
+    {
+      id:"p3", ico:"🧩", nome:"Instrumento de Classificação de Suporte",
+      desc:"Questionário digital para classificação do nível de suporte dos alunos (S1, S2, S3) — parte do Plano Inclusão em Foco 2026.",
+      tags:["dir"],
+      links:[
+        {label:"📝 Acessar Questionário", url:"https://emreginacelicr25-code.github.io/questionario-suporte-rcsc/"}
+      ]
+    },
+    {
+      id:"p4", ico:"🤝", nome:"Plataforma de Inclusão — Equipe de Apoio",
+      desc:"Registros diários, ocorrências críticas, escalas semanais e painel de gestão dos profissionais de apoio à inclusão.",
+      tags:["dir","sec"],
+      links:[
+        {label:"🌐 Acessar Plataforma", url:"https://plataforma-inclusao-rcsc.vercel.app/"}
+      ]
+    },
+    {
+      id:"p5", ico:"🚐", nome:"Transporte Escolar para Alunos com Deficiência",
+      desc:"Sistema de gestão do transporte escolar inclusivo com mapa de rotas, gestão de monitores, registros e geração de e-mail para COTRAN/SME.",
+      tags:["dir","sec","mon"],
+      links:[
+        {label:"🗺️ Painel da Direção/Secretaria", url:"https://emreginacelicr25-code.github.io/transporte-escolar/"},
+        {label:"📱 Painel dos Monitores", url:"https://emreginacelicr25-code.github.io/transporte-escolar/monitor.html"}
+      ]
+    },
+    {
+      id:"p6", ico:"📂", nome:"Central de Documentos Administrativos Técnico-Pedagógicos",
+      desc:"Repositório digital de documentos institucionais com backend em Google Apps Script e integração com Google Sheets.",
+      tags:["dir","sec"],
+      links:[
+        {label:"📂 Acessar Central", url:"https://emreginacelicr-tech.github.io/formulario-escola/central_documentos_regina_celi.html"}
+      ]
+    },
+    {
+      id:"p7", ico:"📅", nome:"Agenda Escolar 2026",
+      desc:"Calendário escolar interativo com planejamento mensal, eventos institucionais e área administrativa protegida por senha.",
+      tags:["dir","sec"],
+      links:[
+        {label:"📅 Acessar Agenda", url:"https://emreginacelicr-tech.github.io/agenda-rc-2026/calendario_escola_regina_celi_2026.html"}
+      ]
+    }
+  ],
+
+  repositorios: [
+    {id:"r1", ico:"📣", nome:"painel-recepcao", org:"emreginacelicr25-code",
+      desc:"Painel pedagógico de recepção com slides, editor e página das famílias. Transmitido via Chromecast para a TV da escola.",
+      ghUrl:"https://github.com/emreginacelicr25-code/painel-recepcao",
+      pagesUrl:"https://emreginacelicr25-code.github.io/painel-recepcao/"},
+    {id:"r2", ico:"📋", nome:"rcsc-triagem", org:"emreginacelicr25-code",
+      desc:"Central de triagem, registro de atendimentos, encaminhamentos e fila de impressão com Supabase.",
+      ghUrl:"https://github.com/emreginacelicr25-code/rcsc-triagem",
+      pagesUrl:"https://emreginacelicr25-code.github.io/rcsc-triagem/"},
+    {id:"r3", ico:"🧩", nome:"questionario-suporte-rcsc", org:"emreginacelicr25-code",
+      desc:"Instrumento de classificação de suporte dos alunos com backend Supabase.",
+      ghUrl:"https://github.com/emreginacelicr25-code/questionario-suporte-rcsc",
+      pagesUrl:"https://emreginacelicr25-code.github.io/questionario-suporte-rcsc/"},
+    {id:"r4", ico:"🚐", nome:"transporte-escolar", org:"emreginacelicr25-code",
+      desc:"Sistema de gestão do transporte escolar inclusivo com OpenStreetMap e Supabase.",
+      ghUrl:"https://github.com/emreginacelicr25-code/transporte-escolar",
+      pagesUrl:"https://emreginacelicr25-code.github.io/transporte-escolar/"},
+    {id:"r5", ico:"📂", nome:"formulario-escola", org:"emreginacelicr-tech",
+      desc:"Central de documentos administrativos técnico-pedagógicos com Google Apps Script.",
+      ghUrl:"https://github.com/emreginacelicr-tech/formulario-escola",
+      pagesUrl:"https://emreginacelicr-tech.github.io/formulario-escola/central_documentos_regina_celi.html"},
+    {id:"r6", ico:"📅", nome:"agenda-rc-2026", org:"emreginacelicr-tech",
+      desc:"Calendário escolar 2026 com área admin protegida por senha.",
+      ghUrl:"https://github.com/emreginacelicr-tech/agenda-rc-2026",
+      pagesUrl:"https://emreginacelicr-tech.github.io/agenda-rc-2026/calendario_escola_regina_celi_2026.html"},
+    {id:"r7", ico:"🤝", nome:"plataforma-inclusao-rcsc (Vercel)", org:"Vercel",
+      desc:"Plataforma de inclusão com registros dos profissionais de apoio. Deploy via Vercel.",
+      ghUrl:"https://vercel.com/dashboard",
+      pagesUrl:"https://plataforma-inclusao-rcsc.vercel.app/"},
+    {id:"r8", ico:"🗄️", nome:"Supabase — rcsc-triagem", org:"Supabase",
+      desc:"Banco de dados da triagem: demandas, impressões, encaminhamentos.",
+      ghUrl:"https://supabase.com/dashboard",
+      pagesUrl:"https://supabase.com/dashboard"},
+    {id:"r9", ico:"🗄️", nome:"Supabase — plataforma-inclusao", org:"Supabase",
+      desc:"Banco de dados da plataforma de inclusão: registros diários, ocorrências e escalas.",
+      ghUrl:"https://supabase.com/dashboard",
+      pagesUrl:"https://supabase.com/dashboard"}
+  ],
+
+  tutoriais: [
+    {
+      id:"t1", ico:"📋", nome:"Central de Triagem e Impressão",
+      plataforma:"rcsc-triagem",
+      desc:"Tutorial completo para uso da Central de Triagem: importação de demandas, classificação, encaminhamentos, fila de impressão e gestão de cotas.",
+      perfis:["Direção","Secretaria","Coordenação Pedagógica"],
+      url:"tutorial-triagem.html",
+      cor:"#2a4f45"
+    },
+    {
+      id:"t2", ico:"🤝", nome:"Plataforma de Acompanhamento da Inclusão",
+      plataforma:"plataforma-inclusao-rcsc",
+      desc:"Tutorial para todos os perfis da Plataforma de Inclusão: profissionais de apoio, secretaria e equipe diretiva. Inclui registros diários, ocorrências, escalas e plano de ação.",
+      perfis:["Profissional de Apoio","Secretaria","Direção","Orientação Pedagógica"],
+      url:"tutorial-inclusao.html",
+      cor:"#1a3a6e"
+    },
+    {
+      id:"t3", ico:"🚐", nome:"Sistema de Transporte Escolar Inclusivo",
+      plataforma:"transporte-escolar",
+      desc:"Tutorial para monitores de transporte (painel de rotas e registro de ocorrências) e para a secretaria/direção (gestão de alunos, monitores, vans e COTRAN/SME).",
+      perfis:["Monitores de Transporte","Secretaria","Direção"],
+      url:"tutorial-transporte.html",
+      cor:"#5c3317"
+    },
+    {
+      id:"t4", ico:"📣", nome:"Painel Pedagógico de Recepção",
+      plataforma:"painel-recepcao",
+      desc:"Como operar o painel de slides da TV da escola, usar o editor de conteúdo e o painel das famílias.",
+      perfis:["Secretaria","Direção"],
+      url:"tutorial-painel.html",
+      cor:"#4a235a"
+    },
+    {
+      id:"t5", ico:"📅", nome:"Agenda Escolar 2026",
+      plataforma:"agenda-rc-2026",
+      desc:"Como navegar no calendário, registrar eventos, usar a área administrativa e exportar dados.",
+      perfis:["Direção","Secretaria","Coordenação Pedagógica"],
+      url:"tutorial-agenda.html",
+      cor:"#1a3a1a"
+    }
+  ],
+
+  mensagens: [
+    {
+      id:"m1", ico:"💛", cor:"#2a4f45", titulo:"Profissionais de Apoio — Plataforma de Inclusão",
+      dest:"Agentes de Apoio à Inclusão (AAI 1 e 2) e Auxiliares de Educação Infantil",
+      texto:`Agentes de apoio à inclusão 1 e 2 e auxiliares de educação infantil
+
+Olá, equipe! 🌟
+
+A equipe diretiva da Escola Municipal Regina Celi da Silva Cerdeira tem o prazer de comunicar que nossa Plataforma Digital de Acompanhamento da Inclusão já está no ar e disponível para acesso! 🎉
+
+🔗 Link de acesso:
+plataforma-inclusao-rcsc.vercel.app
+
+📌 Como acessar:
+1. Abra o link no navegador do seu celular ou computador
+2. Na tela inicial, clique em "Sou Profissional"
+3. Localize e clique no seu nome na lista
+4. Clique em "Acessar meu painel"
+
+📝 O que você vai encontrar:
+• Seu painel pessoal com seus alunos designados
+• Formulário de Registro Diário — para preencher ao final de cada turno
+• Formulário de Ocorrência Crítica — para situações fora do comum
+• Escala Semanal — para AAI 1 (Mediadores)
+• Seu papel e foco de atuação sempre visível
+
+⚠️ Importante:
+O registro diário deve ser preenchido ao final de cada turno, antes de sair da escola. Após salvar, o documento fica disponível automaticamente para a Secretaria Escolar imprimir e arquivar com sua assinatura.
+
+Qualquer dúvida, procure a equipe diretiva. Contamos com o compromisso de cada uma de vocês para que o atendimento aos nossos alunos seja cada vez melhor! 💛
+
+Atenciosamente,
+Equipe Diretiva
+E.M. Regina Celi da Silva Cerdeira
+Centro de Referência`
+    },
+    {
+      id:"m2", ico:"🖨️", cor:"#6b21a8", titulo:"Secretaria Escolar — Plataforma de Inclusão",
+      dest:"Secretaria Escolar",
+      texto:`Para a Secretaria Escolar
+
+Olá! 😊
+
+Informamos que a Plataforma Digital de Acompanhamento da Inclusão da nossa escola já está funcionando e o acesso da Secretaria Escolar já está liberado.
+
+🔗 Link de acesso:
+plataforma-inclusao-rcsc.vercel.app
+
+🔑 Como acessar:
+1. Abra o link no navegador
+2. Clique em "Secretaria Escolar"
+3. Digite a senha: direcao2026
+4. Clique em "Acessar Gestão de Impressão"
+
+🖨️ Sua função na plataforma:
+A secretaria não preenche formulários — isso é feito pelos profissionais de apoio. Seu papel é:
+• Acessar os documentos gerados pelos profissionais
+• Imprimir cada documento com um clique
+• Coletar as assinaturas (Profissional + Direção + Responsável pelo aluno, quando necessário)
+• Arquivar nas pastas correspondentes:
+   📂 RD- → Registros Diários de Acompanhamento
+   📂 OC- → Atas de Ocorrência Crítica
+   📂 ES- → Escalas Semanais
+
+📅 Recomendamos verificar a plataforma diariamente ao final de cada turno para manter o arquivo físico em dia.
+
+Em caso de dúvidas, a equipe diretiva está à disposição.
+
+Atenciosamente,
+Equipe Diretiva
+E.M. Regina Celi da Silva Cerdeira
+Centro de Referência`
+    },
+    {
+      id:"m3", ico:"🎊", cor:"#1b4332", titulo:"Equipe Diretiva / OP / OE — Plataforma de Inclusão",
+      dest:"Equipe Diretiva, Orientação Pedagógica e Educacional",
+      texto:`Equipe Diretiva, OP e OE — boas notícias! 🎊
+
+Nossa Plataforma Digital de Acompanhamento da Inclusão está oficialmente no ar!
+
+🔗 Link de acesso:
+plataforma-inclusao-rcsc.vercel.app
+
+🔑 Como acessar:
+1. Abra o link no navegador
+2. Clique em "Equipe Diretiva"
+3. Digite a senha: direcao2026
+4. Clique em "Acessar Painel da Direção"
+
+📊 O que a equipe diretiva e pedagógica acessa:
+• Painel Geral — visão em tempo real de todos os profissionais
+• Profissionais — quadro completo de AAI 1, AAI 2 e Auxiliares
+• Histórico — todos os registros diários com filtro por profissional ou aluno
+• Ocorrências — atas de ocorrência crítica com natureza, intervenção e desfecho
+• Escala Semanal — grade de alocação por aluno para validação semanal
+• Plano de Ação — matriz de responsabilidades e protocolo "Mão Segura"
+• Impressão — acesso e impressão de todos os documentos gerados
+
+📋 Rotina recomendada:
+• Diariamente: verificar o painel e identificar profissionais sem registro
+• Segunda-feira: validar e imprimir a Escala Semanal
+• Semanalmente: revisar ocorrências e identificar padrões por aluno
+
+⚠️ Alertas de cobertura/substituição aparecem em laranja sempre que um profissional atender um aluno fora da sua designação oficial.
+
+"A inclusão não é um favor, é um direito. Nossa organização é a ferramenta que viabiliza esse direito." 💛
+
+Atenciosamente,
+Equipe Diretiva
+E.M. Regina Celi da Silva Cerdeira
+Centro de Referência`
+    },
+    {
+      id:"m4", ico:"🚐", cor:"#5c3317", titulo:"Monitores de Transporte — Sistema de Transporte",
+      dest:"Monitores de Transporte Escolar",
+      texto:`Monitoras e monitores de transporte, bom dia! 🚐
+
+A E.M. Regina Celi da Silva Cerdeira informa que o Sistema de Gestão do Transporte Escolar Inclusivo já está disponível para acesso pelo celular.
+
+🔗 Seu link (Painel dos Monitores):
+emreginacelicr25-code.github.io/transporte-escolar/monitor.html
+
+📌 Salve nos favoritos ou crie um atalho na tela inicial do celular.
+
+📱 O que você encontra:
+• Mapa com os alunos da sua rota (verde = localização exata confirmada)
+• Lista de paradas em ordem com endereços completos
+• Botão "🗺️ Ir" que abre o Google Maps direto para a casa do aluno
+• Formulário de Registro de Ocorrências (botão laranja 📝 Registrar)
+
+⚠️ IMPORTANTE — Registre SEMPRE:
+Qualquer situação durante o transporte deve ser registrada no sistema. O registro:
+✅ Protege você juridicamente
+✅ Chega imediatamente para a direção
+✅ Fica salvo permanentemente com data e hora
+
+🆘 Emergências:
+SAMU: 192 | Bombeiros: 193 | Direção: (21) 99077-9685
+
+Qualquer dúvida, procure a secretaria ou a equipe diretiva.
+
+Atenciosamente,
+Equipe Diretiva
+E.M. Regina Celi da Silva Cerdeira`
+    },
+    {
+      id:"m5", ico:"📋", cor:"#1a3a6e", titulo:"Professoras — Central de Triagem e Impressão",
+      dest:"Professoras e Professores",
+      texto:`Professoras e professores, boa tarde! 📋
+
+A equipe diretiva informa que a Central de Triagem, Registros e Encaminhamentos está disponível para uso.
+
+🔗 Link de acesso:
+emreginacelicr25-code.github.io/rcsc-triagem/
+
+O sistema permite registrar demandas de atendimento especializado, acompanhar encaminhamentos e solicitar impressão de documentos diretamente pela secretaria.
+
+📝 Para solicitar impressão de material:
+Acesse o link da fila de impressão e envie seu arquivo. A secretaria receberá automaticamente.
+
+🖨️ Fila de impressão:
+emreginacelicr25-code.github.io/rcsc-triagem/impressao.html
+
+Qualquer dúvida, a equipe diretiva está à disposição.
+
+Atenciosamente,
+Equipe Diretiva
+E.M. Regina Celi da Silva Cerdeira`
+    }
+  ]
+};
+
+// ═══════════════════════════════════════════
+// GERENCIAMENTO DE DADOS
+// ═══════════════════════════════════════════
+
+function carregarDados() {
+  try {
+    const salvo = localStorage.getItem('cgd_rcsc_dados');
+    if (salvo) return JSON.parse(salvo);
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(DADOS_PADRAO));
+}
+
+function salvarDados() {
+  localStorage.setItem('cgd_rcsc_dados', JSON.stringify(dados));
+}
+
+function resetarDados() {
+  dados = JSON.parse(JSON.stringify(DADOS_PADRAO));
+  salvarDados();
+  renderizarTudo();
+  alert('Dados restaurados para o padrão.');
+}
+
+let dados = carregarDados();
+
+// ═══════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════
+
+function tentarLogin() {
+  const v = document.getElementById('senha-input').value;
+  const d = carregarDados();
+  if (v === d.senha) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    renderizarTudo();
+  } else {
+    const el = document.getElementById('login-erro');
+    el.style.display = 'block';
+    document.getElementById('senha-input').value = '';
+    setTimeout(()=>el.style.display='none', 3000);
+  }
+}
+
+function sair() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('senha-input').value = '';
+}
+
+// ═══════════════════════════════════════════
+// NAVEGAÇÃO
+// ═══════════════════════════════════════════
+
+function irTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('ativa'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('ativa'));
+  document.getElementById('tab-'+id).classList.add('ativa');
+  if(btn) btn.classList.add('ativa');
+}
+
+function irEdTab(id, btn) {
+  document.querySelectorAll('.ed-section').forEach(s=>s.classList.remove('ativo'));
+  document.querySelectorAll('.ed-tab').forEach(b=>b.classList.remove('ativo'));
+  document.getElementById(id).classList.add('ativo');
+  if(btn) btn.classList.add('ativo');
+}
+
+// ═══════════════════════════════════════════
+// RENDERIZAÇÃO
+// ═══════════════════════════════════════════
+
+const TAGS_LABELS = {dir:'Direção',fam:'Famílias',sec:'Secretaria',mon:'Monitores'};
+
+function renderizarPlataformas() {
+  const g = document.getElementById('grid-plataformas');
+  g.innerHTML = dados.plataformas.map(p=>`
+    <div class="plat-card">
+      <div class="plat-card-top">
+        <div class="plat-ico">${p.ico}</div>
+        <div class="plat-info">
+          <h3>${p.nome}</h3>
+          <p>${p.desc}</p>
+        </div>
+      </div>
+      <div class="plat-tags">
+        ${(p.tags||[]).map(t=>`<span class="tag ${t}">${TAGS_LABELS[t]||t}</span>`).join('')}
+      </div>
+      <div class="plat-links">
+        ${(p.links||[]).map(l=>`
+          <a href="${l.url}" target="_blank" class="plat-link">
+            <span>${l.label}</span><span class="arr">↗</span>
+          </a>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function renderizarRepositorios() {
+  const g = document.getElementById('grid-repositorios');
+  g.innerHTML = dados.repositorios.map(r=>`
+    <div class="repo-card">
+      <div class="repo-card-top">
+        <div class="repo-ico">${r.ico}</div>
+        <h3>${r.nome}</h3>
+      </div>
+      <p style="font-size:.72rem;color:var(--verde3);font-weight:700;margin-bottom:6px">${r.org}</p>
+      <p>${r.desc}</p>
+      <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px">
+        <a href="${r.ghUrl}" target="_blank" class="repo-link repo-link-gh">🔗 GitHub / Painel</a>
+        ${r.pagesUrl && r.pagesUrl !== r.ghUrl ? `<a href="${r.pagesUrl}" target="_blank" class="repo-link" style="background:var(--verde2)">🌐 Site</a>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function renderizarTutoriais() {
+  const g = document.getElementById('grid-tutoriais');
+  g.innerHTML = dados.tutoriais.map(t=>`
+    <div class="tut-card" style="border-top:4px solid ${t.cor||'var(--verde)'}">
+      <div style="font-size:1.8rem;margin-bottom:8px">${t.ico}</div>
+      <h3>${t.nome}</h3>
+      <p>${t.desc}</p>
+      <div class="tut-perfis">
+        ${(t.perfis||[]).map(p=>`<span class="tag dir" style="background:#f1f5f0">${p}</span>`).join('')}
+      </div>
+      ${t.url ? `<a href="${t.url}" target="_blank" class="tut-btn">📖 Abrir Tutorial</a>` : '<span style="font-size:.78rem;color:var(--muted)">Tutorial incorporado abaixo ↓</span>'}
+    </div>`).join('');
+}
+
+function renderizarMensagens() {
+  const g = document.getElementById('grid-mensagens');
+  g.innerHTML = dados.mensagens.map(m=>`
+    <div class="msg-card">
+      <div class="msg-header" style="background:${m.cor||'#2a4f45'}">
+        <span class="ico">${m.ico}</span>
+        <h3>${m.titulo}</h3>
+      </div>
+      <div class="msg-body">
+        <div class="msg-dest" style="color:${m.cor||'#2a4f45'}">Para: ${m.dest}</div>
+        <div class="msg-preview">${m.texto}</div>
+        <div>
+          <button class="msg-btn-ver" onclick="toggleMsg('msg-full-${m.id}',this)">Ver mensagem completa</button>
+          <button class="msg-btn-copiar" onclick="copiarMsg('${m.id}',this)">📋 Copiar</button>
+        </div>
+        <div class="msg-full" id="msg-full-${m.id}">
+          <div class="msg-full-txt">${m.texto}</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderizarEditorListas() {
+  // Plataformas
+  document.getElementById('ed-list-plat').innerHTML = dados.plataformas.map(p=>`
+    <div class="item-row">
+      <span>${p.ico}</span>
+      <span class="nome">${p.nome}</span>
+      <span class="detalhe">${(p.links||[]).length} link(s)</span>
+      <button class="btn-remover" onclick="removerItem('plataformas','${p.id}')">Remover</button>
+    </div>`).join('');
+  // Repositórios
+  document.getElementById('ed-list-repo').innerHTML = dados.repositorios.map(r=>`
+    <div class="item-row">
+      <span>${r.ico}</span>
+      <span class="nome">${r.nome}</span>
+      <span class="detalhe">${r.org}</span>
+      <button class="btn-remover" onclick="removerItem('repositorios','${r.id}')">Remover</button>
+    </div>`).join('');
+  // Tutoriais
+  document.getElementById('ed-list-tut').innerHTML = dados.tutoriais.map(t=>`
+    <div class="item-row">
+      <span>${t.ico}</span>
+      <span class="nome">${t.nome}</span>
+      <span class="detalhe">${(t.perfis||[]).join(', ')}</span>
+      <button class="btn-remover" onclick="removerItem('tutoriais','${t.id}')">Remover</button>
+    </div>`).join('');
+  // Mensagens
+  document.getElementById('ed-list-msg').innerHTML = dados.mensagens.map(m=>`
+    <div class="item-row">
+      <span>${m.ico}</span>
+      <span class="nome">${m.titulo}</span>
+      <span class="detalhe">${m.dest}</span>
+      <button class="btn-remover" onclick="removerItem('mensagens','${m.id}')">Remover</button>
+    </div>`).join('');
+}
+
+function renderizarTudo() {
+  renderizarPlataformas();
+  renderizarRepositorios();
+  renderizarTutoriais();
+  renderizarMensagens();
+  renderizarEditorListas();
+}
+
+// ═══════════════════════════════════════════
+// AÇÕES
+// ═══════════════════════════════════════════
+
+function toggleMsg(id, btn) {
+  const el = document.getElementById(id);
+  if(el.style.display === 'block') {
+    el.style.display = 'none';
+    btn.textContent = 'Ver mensagem completa';
+  } else {
+    el.style.display = 'block';
+    btn.textContent = 'Fechar';
+  }
+}
+
+function copiarMsg(id, btn) {
+  const m = dados.mensagens.find(x=>x.id===id);
+  if(!m) return;
+  navigator.clipboard.writeText(m.texto).then(()=>{
+    btn.textContent = '✓ Copiado!';
+    setTimeout(()=>btn.textContent='📋 Copiar', 2500);
+  });
+}
+
+function removerItem(colecao, id) {
+  if(!confirm('Remover este item?')) return;
+  dados[colecao] = dados[colecao].filter(x=>x.id!==id);
+  salvarDados();
+  renderizarTudo();
+}
+
+function alterarSenha() {
+  const n = document.getElementById('nova-senha').value;
+  const c = document.getElementById('confirmar-senha').value;
+  if(!n || n.length < 4) return alert('Senha muito curta (mínimo 4 caracteres).');
+  if(n !== c) return alert('As senhas não coincidem.');
+  dados.senha = n;
+  salvarDados();
+  const el = document.getElementById('msg-senha');
+  el.style.display = 'inline';
+  el.style.opacity = '1';
+  document.getElementById('nova-senha').value = '';
+  document.getElementById('confirmar-senha').value = '';
+  setTimeout(()=>el.style.opacity='0', 3000);
+}
+
+// ═══════════════════════════════════════════
+// MODAL — NOVA ENTRADA
+// ═══════════════════════════════════════════
+
+let modalTipo = null;
+
+function abrirModalNova(tipo) {
+  modalTipo = tipo;
+  const modal = document.getElementById('modal');
+  const ico = {plat:'🌐',repo:'📁',tut:'📋',msg:'💬'}[tipo];
+  const tit = {plat:'Nova Plataforma',repo:'Novo Repositório',tut:'Novo Tutorial',msg:'Nova Mensagem'}[tipo];
+  document.getElementById('modal-ico').textContent = ico;
+  document.getElementById('modal-titulo').textContent = tit;
+
+  let html = '';
+  if(tipo==='plat') html = `
+    <div class="form-row"><label>Ícone (emoji)</label><input id="f-ico" value="🌐"></div>
+    <div class="form-row"><label>Nome da plataforma</label><input id="f-nome" placeholder="Ex: Sistema de Matrículas"></div>
+    <div class="form-row"><label>Descrição</label><textarea id="f-desc" placeholder="O que essa plataforma faz?"></textarea></div>
+    <div class="form-row"><label>Link 1 — Rótulo</label><input id="f-l1r" placeholder="Ex: Acessar sistema"></div>
+    <div class="form-row"><label>Link 1 — URL</label><input id="f-l1u" placeholder="https://..."></div>
+    <div class="form-row"><label>Link 2 — Rótulo (opcional)</label><input id="f-l2r" placeholder=""></div>
+    <div class="form-row"><label>Link 2 — URL (opcional)</label><input id="f-l2u" placeholder="https://..."></div>
+    <button class="btn-salvar" onclick="salvarNova()">Salvar plataforma</button>`;
+  else if(tipo==='repo') html = `
+    <div class="form-row"><label>Ícone (emoji)</label><input id="f-ico" value="📁"></div>
+    <div class="form-row"><label>Nome do repositório</label><input id="f-nome" placeholder="Ex: meu-repo"></div>
+    <div class="form-row"><label>Organização / Plataforma</label><input id="f-org" placeholder="Ex: emreginacelicr25-code"></div>
+    <div class="form-row"><label>Descrição</label><textarea id="f-desc" placeholder="O que este repositório contém?"></textarea></div>
+    <div class="form-row"><label>URL GitHub / Painel</label><input id="f-ghurl" placeholder="https://github.com/..."></div>
+    <div class="form-row"><label>URL do site (opcional)</label><input id="f-purl" placeholder="https://..."></div>
+    <button class="btn-salvar" onclick="salvarNova()">Salvar repositório</button>`;
+  else if(tipo==='tut') html = `
+    <div class="form-row"><label>Ícone (emoji)</label><input id="f-ico" value="📋"></div>
+    <div class="form-row"><label>Nome do tutorial</label><input id="f-nome" placeholder="Ex: Tutorial do Sistema X"></div>
+    <div class="form-row"><label>Descrição</label><textarea id="f-desc" placeholder="O que este tutorial cobre?"></textarea></div>
+    <div class="form-row"><label>Perfis atendidos (separados por vírgula)</label><input id="f-perf" placeholder="Ex: Direção, Secretaria"></div>
+    <div class="form-row"><label>URL do tutorial (arquivo HTML)</label><input id="f-url" placeholder="Ex: tutorial-novo.html"></div>
+    <div class="form-row"><label>Cor da borda superior (hex)</label><input id="f-cor" value="#2d6a4f"></div>
+    <button class="btn-salvar" onclick="salvarNova()">Salvar tutorial</button>`;
+  else if(tipo==='msg') html = `
+    <div class="form-row"><label>Ícone (emoji)</label><input id="f-ico" value="💬"></div>
+    <div class="form-row"><label>Título</label><input id="f-titulo" placeholder="Ex: Professoras — Sistema X"></div>
+    <div class="form-row"><label>Destinatário</label><input id="f-dest" placeholder="Ex: Corpo docente"></div>
+    <div class="form-row"><label>Texto completo da mensagem</label>
+      <textarea id="f-texto" style="min-height:200px" placeholder="Cole ou escreva a mensagem aqui..."></textarea></div>
+    <div class="form-row"><label>Cor do cabeçalho (hex)</label><input id="f-cor" value="#2a4f45"></div>
+    <button class="btn-salvar" onclick="salvarNova()">Salvar mensagem</button>`;
+
+  document.getElementById('modal-corpo').innerHTML = html;
+  modal.classList.add('aberto');
+}
+
+function salvarNova() {
+  const uid = 'id_' + Date.now();
+  if(modalTipo==='plat') {
+    const links = [];
+    const l1r = document.getElementById('f-l1r').value;
+    const l1u = document.getElementById('f-l1u').value;
+    if(l1r && l1u) links.push({label:l1r, url:l1u});
+    const l2r = document.getElementById('f-l2r').value;
+    const l2u = document.getElementById('f-l2u').value;
+    if(l2r && l2u) links.push({label:l2r, url:l2u});
+    dados.plataformas.push({
+      id:uid,
+      ico: document.getElementById('f-ico').value || '🌐',
+      nome: document.getElementById('f-nome').value,
+      desc: document.getElementById('f-desc').value,
+      tags:['dir'], links
+    });
+  } else if(modalTipo==='repo') {
+    dados.repositorios.push({
+      id:uid,
+      ico: document.getElementById('f-ico').value || '📁',
+      nome: document.getElementById('f-nome').value,
+      org: document.getElementById('f-org').value,
+      desc: document.getElementById('f-desc').value,
+      ghUrl: document.getElementById('f-ghurl').value,
+      pagesUrl: document.getElementById('f-purl').value
+    });
+  } else if(modalTipo==='tut') {
+    dados.tutoriais.push({
+      id:uid,
+      ico: document.getElementById('f-ico').value || '📋',
+      nome: document.getElementById('f-nome').value,
+      desc: document.getElementById('f-desc').value,
+      perfis: (document.getElementById('f-perf').value||'').split(',').map(s=>s.trim()).filter(Boolean),
+      url: document.getElementById('f-url').value,
+      cor: document.getElementById('f-cor').value || '#2d6a4f'
+    });
+  } else if(modalTipo==='msg') {
+    dados.mensagens.push({
+      id:uid,
+      ico: document.getElementById('f-ico').value || '💬',
+      titulo: document.getElementById('f-titulo').value,
+      dest: document.getElementById('f-dest').value,
+      texto: document.getElementById('f-texto').value,
+      cor: document.getElementById('f-cor').value || '#2a4f45'
+    });
+  }
+  salvarDados();
+  renderizarTudo();
+  fecharModal();
+}
+
+function fecharModal() {
+  document.getElementById('modal').classList.remove('aberto');
+  modalTipo = null;
+}
+
+// Enter no login
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('senha-input').focus();
+});
+</script>
+</body>
+</html>
