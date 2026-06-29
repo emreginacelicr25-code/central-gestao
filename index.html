@@ -845,8 +845,26 @@ function renderizarTutoriais() {
       <div class="tut-perfis">
         ${(t.perfis||[]).map(p=>`<span class="tag dir" style="background:#f1f5f0">${p}</span>`).join('')}
       </div>
-      ${t.url ? `<a href="${t.url}" target="_blank" class="tut-btn">📖 Abrir Tutorial</a>` : '<span style="font-size:.78rem;color:var(--muted)">Tutorial incorporado abaixo ↓</span>'}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        ${t.url ? `<a href="${t.url}" target="_blank" class="tut-btn">📖 Abrir Tutorial</a>` : '<span style="font-size:.78rem;color:var(--muted)">Tutorial incorporado abaixo ↓</span>'}
+        ${t.url ? `<button class="tut-btn" style="background:#e76f51;border:none;cursor:pointer" onclick="imprimirTutorial('${t.url}','${t.nome.replace(/'/g,"\\'")}')">🖨️ Imprimir / PDF</button>` : ''}
+      </div>
     </div>`).join('');
+}
+
+function imprimirTutorial(url, nome) {
+  const w = window.open(url, '_blank');
+  if (!w) { alert('Permita pop-ups para usar esta função.'); return; }
+  w.addEventListener('load', () => {
+    // Injeta estilo de impressão e dispara diálogo
+    const s = w.document.createElement('style');
+    s.textContent = '@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}';
+    w.document.head.appendChild(s);
+    setTimeout(() => {
+      w.document.title = nome + ' — E.M. Regina Celi';
+      w.print();
+    }, 800);
+  });
 }
 
 function renderizarMensagens() {
@@ -861,8 +879,9 @@ function renderizarMensagens() {
         <div class="msg-dest" style="color:${m.cor||'#2a4f45'}">Para: ${m.dest}</div>
         <div class="msg-preview">${m.texto}</div>
         <div>
-          <button class="msg-btn-ver" onclick="toggleMsg('msg-full-${m.id}',this)">Ver mensagem completa</button>
+          <button class="msg-btn-ver" onclick="toggleMsg('msg-full-${m.id}',this)">Ver completa</button>
           <button class="msg-btn-copiar" onclick="copiarMsg('${m.id}',this)">📋 Copiar</button>
+          <button class="msg-btn-ver" style="border-color:#e76f51;color:#e76f51" onclick="imprimirMensagem('${m.id}')">🖨️ PDF</button>
         </div>
         <div class="msg-full" id="msg-full-${m.id}">
           <div class="msg-full-txt">${m.texto}</div>
@@ -1068,6 +1087,31 @@ function salvarNova() {
 function fecharModal() {
   document.getElementById('modal').classList.remove('aberto');
   modalTipo = null;
+}
+
+function imprimirMensagem(id) {
+  const m = dados.mensagens.find(x=>x.id===id);
+  if(!m) return;
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+  <title>${m.titulo} — E.M. Regina Celi</title>
+  <style>
+    body{font-family:'Segoe UI',sans-serif;max-width:680px;margin:40px auto;color:#1a1a1a;line-height:1.7;padding:20px}
+    .cab{background:${m.cor||'#2a4f45'};color:#fff;padding:18px 24px;border-radius:10px;margin-bottom:24px}
+    .cab h1{font-size:1.1rem;font-weight:800;margin-bottom:4px}
+    .cab p{font-size:.82rem;opacity:.85}
+    .corpo{white-space:pre-line;font-size:.92rem}
+    .rodape{margin-top:40px;font-size:.75rem;color:#888;border-top:1px solid #ddd;padding-top:12px}
+    @media print{body{margin:20px}}
+  </style></head><body>
+  <div class="cab"><h1>${m.ico} ${m.titulo}</h1><p>Para: ${m.dest}</p></div>
+  <div class="corpo">${m.texto}</div>
+  <div class="rodape">E.M. Regina Celi da Silva Cerdeira · Centro de Referência em Educação Inclusiva · Duque de Caxias, RJ · 2026</div>
+  <script>window.onload=()=>{document.title='${m.titulo.replace(/'/g,"\\'")}';window.print()}<\/script>
+  </body></html>`;
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const w = window.open(url, '_blank');
+  if (!w) alert('Permita pop-ups para usar esta função.');
 }
 
 // Enter no login
