@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial — Sistema de Transporte Escolar Inclusivo · E.M. Regina Celi</title>
+<style>
+:root{
+  --marrom:#5c3317;--marrom2:#8b4513;--marrom3:#fdf3e7;--marrom4:#f5deb3;
+  --verde:#1b4332;--azul:#1a3a6e;
+  --ink:#0d1b2a;--muted:#4a5568;--bg:#f7f3ee;--line:#e2d5c3;--white:#fff;
+  --warn:#e76f51;--ok:#2d6a4f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+
+/* HEADER */
+header{background:linear-gradient(135deg,var(--marrom) 0%,var(--marrom2) 100%);
+  padding:36px 24px 28px;text-align:center}
+.header-label{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);
+  color:#fff;border-radius:30px;padding:5px 16px;font-size:.72rem;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:14px}
+header h1{font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:6px}
+header p{font-size:.85rem;color:rgba(255,255,255,.82)}
+.header-escola{display:inline-block;background:rgba(255,255,255,.13);border-radius:10px;
+  padding:8px 20px;font-size:.74rem;color:#fff;margin-top:14px}
+
+/* SELETOR */
+.seletor{max-width:780px;margin:-28px auto 0;padding:0 16px;position:relative;z-index:10}
+.seletor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.perfil-btn{background:#fff;border-radius:12px;padding:18px;text-align:center;
+  cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.12);border:3px solid transparent;
+  transition:all .2s}
+.perfil-btn:hover{transform:translateY(-2px)}
+.perfil-btn.ativo{border-color:var(--marrom2)}
+.perfil-btn .icon{font-size:2rem;margin-bottom:8px}
+.perfil-btn h3{font-size:.88rem;font-weight:700;color:var(--ink);margin-bottom:3px}
+.perfil-btn p{font-size:.74rem;color:var(--muted);line-height:1.4}
+.perfil-btn .badge{display:inline-block;border-radius:20px;padding:3px 10px;
+  font-size:.7rem;font-weight:700;margin-top:8px;color:#fff}
+
+/* CONTEÚDO */
+.conteudo{max-width:820px;margin:0 auto;padding:32px 16px 60px;display:none}
+.conteudo.visivel{display:block}
+
+/* SEÇÕES */
+.secao{background:var(--white);border-radius:14px;margin-bottom:20px;overflow:hidden;
+  border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.secao-cab{display:flex;align-items:center;gap:12px;padding:15px 20px}
+.secao-cab .ico{font-size:1.5rem}
+.secao-cab h2{font-size:.95rem;font-weight:700;color:#fff}
+.secao-cab p{font-size:.75rem;color:rgba(255,255,255,.8);margin-top:2px}
+.secao-body{padding:20px 22px}
+
+/* PASSOS */
+.passos{display:flex;flex-direction:column}
+.passo{display:flex;gap:14px;padding-bottom:16px}
+.passo:last-child{padding-bottom:0}
+.passo-esq{display:flex;flex-direction:column;align-items:center}
+.passo-num{color:#fff;width:28px;height:28px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0}
+.passo-linha{width:2px;background:var(--line);flex:1;margin:3px 0}
+.passo:last-child .passo-linha{display:none}
+.passo-txt{padding-top:3px;flex:1}
+.passo-txt h4{font-size:.9rem;font-weight:700;color:var(--ink);margin-bottom:3px}
+.passo-txt p{font-size:.83rem;color:var(--muted);line-height:1.6}
+.dica{border-radius:0 7px 7px 0;padding:8px 12px;margin-top:7px;font-size:.8rem;font-weight:500}
+
+/* ALERTAS */
+.alerta{border-radius:8px;padding:10px 14px;font-size:.83rem;margin:10px 0;
+  display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.alerta.critico{background:#fee2e2;border:1px solid #fca5a5;color:#991b1b}
+.alerta.aviso{background:#fef9c3;border:1px solid #fde047;color:#854d0e}
+.alerta.ok{background:#d1fae5;border:1px solid #6ee7b7;color:#065f46}
+.alerta.info{background:#dbeafe;border:1px solid #93c5fd;color:#1e3a5f}
+
+/* TABELAS */
+table{width:100%;border-collapse:collapse;font-size:.83rem;margin:10px 0}
+th{padding:8px 12px;text-align:left;font-size:.74rem;text-transform:uppercase;
+  letter-spacing:.4px;font-weight:700}
+td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+
+/* MARCADORES */
+.marcador-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.marcador{display:flex;align-items:center;gap:8px;background:var(--bg);
+  border-radius:8px;padding:9px 12px;font-size:.82rem}
+.marcador strong{color:var(--ink)}
+
+/* CHECKLIST */
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;
+  background:#fff;border-radius:8px;border:1px solid var(--line);margin-bottom:6px}
+.check-box{width:18px;height:18px;border:2px solid var(--marrom2);border-radius:4px;
+  flex-shrink:0;margin-top:2px}
+.check-item p{font-size:.83rem;color:var(--ink);line-height:1.5}
+
+/* VANS */
+.van-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:12px 0}
+.van-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:14px}
+.van-card h4{font-size:.88rem;font-weight:700;color:var(--marrom);margin-bottom:6px}
+.van-card p{font-size:.78rem;color:var(--muted);line-height:1.5}
+.van-ad{border-left:3px solid var(--marrom2)}
+
+/* EMERGÊNCIA */
+.emergencia{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.em-card{border-radius:8px;padding:12px;text-align:center}
+.em-card h4{font-size:.88rem;font-weight:700;margin-bottom:2px}
+.em-card p{font-size:1.1rem;font-weight:900}
+
+/* FOOTER */
+footer{background:var(--marrom);color:rgba(255,255,255,.7);text-align:center;
+  padding:20px;font-size:.75rem}
+
+@media(max-width:600px){
+  .seletor-grid{grid-template-columns:1fr}
+  .marcador-grid,.emergencia{grid-template-columns:1fr}
+  .conteudo{padding:24px 12px 40px}
+  .van-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-label">🚐 Tutorial Oficial · 2026</div>
+  <h1>Sistema de Transporte Escolar Inclusivo</h1>
+  <p>Guia completo para monitores, secretaria e equipe diretiva</p>
+  <div class="header-escola">E.M. Regina Celi da Silva Cerdeira · Centro de Referência em Educação Inclusiva · Duque de Caxias, RJ</div>
+</header>
+
+<!-- SELETOR -->
+<div class="seletor">
+  <div class="seletor-grid">
+    <div class="perfil-btn" onclick="mostrar('mon')">
+      <div class="icon">📱</div>
+      <h3>Monitor de Transporte</h3>
+      <p>Painel de rotas, mapa e registro de ocorrências</p>
+      <span class="badge" style="background:var(--marrom2)">Ver tutorial →</span>
+    </div>
+    <div class="perfil-btn" onclick="mostrar('dir')">
+      <div class="icon">🖥️</div>
+      <h3>Secretaria / Direção</h3>
+      <p>Gestão de alunos, monitores, vans e COTRAN/SME</p>
+      <span class="badge" style="background:var(--verde)">Ver tutorial →</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     MONITOR
+══════════════════════════ -->
+<div id="tut-mon" class="conteudo">
+
+  <div class="secao">
+    <div class="secao-cab" style="background:linear-gradient(90deg,var(--marrom),var(--marrom2))">
+      <div class="ico">📌</div>
+      <div><h2>Antes de começar</h2><p>Configure o acesso no seu celular</p></div>
+    </div>
+    <div class="secao-body">
+      <div class="alerta info"><span>💡</span><div>Salve o link do Painel dos Monitores nos favoritos ou crie um atalho na tela inicial. Você vai precisar todo dia.</div></div>
+      <div style="background:var(--marrom3);border-radius:8px;padding:12px 16px;margin-top:10px;font-size:.84rem">
+        <strong>📱 Seu link:</strong><br>
+        <code style="font-size:.88rem;color:var(--marrom)">emreginacelicr25-code.github.io/transporte-escolar/monitor.html</code>
+      </div>
+    </div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-cab" style="background:linear-gradient(90deg,var(--marrom),var(--marrom2))">
+      <div class="ico">1️⃣</div>
+      <div><h2>Acessando o Painel</h2><p>Primeiros passos</p></div>
+    </div>
+    <div class="secao-body">
+      <div class="passos">
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--marrom2)">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Abra o Chrome no celular</h4><p>Digite o endereço do painel ou acesse pelo favorito salvo.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--marrom2)">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Aguarde carregar</h4><p>O painel carrega automaticamente as rotas e alunos do banco de dados. Leva alguns segundos.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--marrom2)">3</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Selecione sua van</h4><p>Na barra colorida no topo, toque no nome da sua van (C1, C2, C3, AD1 ou AD2). O mapa filtra somente os alunos da sua rota.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--marrom2)">4</div></div>
+          <div class="passo-txt"><h4>Selecione o turno</h4><p>Toque em ☀️ Manhã ou 🌤️ Tarde para ver somente os alunos do seu horário.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-cab" style="background:linear-gradient(90deg,var(--marrom),var(--marrom2))">
+      <div class="ico">🗺️</div>
+      <div><h2>Usando o Mapa</h2><p>O que cada marcador significa</p></div>
+    </div>
+    <div class="secao-body">
+      <div class="marcador-grid">
+        <div class="marcador"><span style="font-size:1.3rem">📍</span><div><strong>Verde</strong><br><span style="font-size:.76rem;color:var(--muted)">Localização exata — confirmada via WhatsApp</span></div></div>
+        <div class="marcador"><span style="font-size:1.3rem">🔵</span><div><strong>Azul</strong><br><span style="font-size:.76rem;color:var(--muted)">Geocodificado automaticamente — aprox.</span></div></div>
+        <div class="marcador"><span style="font-size:1.3rem">⚪</span><div><strong>Cinza</strong><br><span style="font-size:.76rem;color:var(--muted)">Estimado por bairro — aguarda confirmação</span></div></div>
+        <div class="marcador"><span style="font-size:1.3rem">🏫</span><div><strong>Escola</strong><br><span style="font-size:.76rem;color:var(--muted)">E.M. Regina Celi — origem e destino</span></div></div>
+      </div>
+      <div class="dica" style="background:var(--marrom3);border-left:3px solid var(--marrom2);color:var(--marrom);margin-top:8px">
+        💡 Toque em qualquer marcador → popup → <strong>🗺️ Como chegar</strong> → o Google Maps abre com a rota até a casa do aluno.
+      </div>
+    </div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-cab" style="background:linear-gradient(90deg,var(--marrom),var(--marrom2))">
+      <div class="ico">📝</div>
+      <div><h2>Registrando uma Ocorrência</h2><p>Quando e como usar o formulário</p></div>
+    </div>
+    <div class="secao-body">
+      <div class="alerta critico"><span>⚠️</span><div><strong>REGISTRE SEMPRE.</strong> Qualquer situação durante o transporte deve ser registrada. O registro protege você juridicamente e chega imediatamente para a direção.</div></div>
+      <div class="passos" style="margin-top:14px">
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--warn)">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Toque no botão 📝 Registrar</h4><p>Botão laranja no canto superior direito. O formulário abre abaixo do mapa.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--warn)">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Preencha nome e van</h4><p>Digite seu nome completo e selecione sua van.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--warn)">3</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Selecione o tipo de ocorrência</h4><p>Atraso na rota · Problema mecânico · Área de risco · Aluno não encontrado · Responsável ausente · Crise comportamental · Crise convulsiva · Aluno machucado · Outro</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--warn)">4</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Selecione a natureza</h4><p>🔵 Informativo · 🟡 Atenção · 🔴 Crítico — use Crítico para situações que exigem ação imediata.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--warn)">5</div></div>
+          <div class="passo-txt"><h4>Descreva e envie</h4><p>Quanto mais detalhes, melhor para a escola agir. Após enviar, guarde o comprovante com ID e data/hora.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-cab" style="background:linear-gradient(90deg,#991b1b,#dc2626)">
+      <div class="ico">🆘</div>
+      <div><h2>Emergências — O que fazer</h2><p>Procedimentos imediatos por tipo de ocorrência</p></div>
+    </div>
+    <div class="secao-body">
+      <table>
+        <tr><th style="background:#fee2e2;color:#991b1b">Ocorrência</th><th style="background:#fee2e2;color:#991b1b">O que fazer imediatamente</th></tr>
+        <tr><td><strong>🚨 Crise convulsiva</strong></td><td>Proteja a cabeça, posição lateral, cronometre. Se > 5 min, ligue <strong>192 (SAMU)</strong>. Registre.</td></tr>
+        <tr><td><strong>😤 Crise comportamental</strong></td><td>Frases curtas e calmas. Reduza estímulos. Ligue para a escola. Registre.</td></tr>
+        <tr><td><strong>🚪 Responsável ausente</strong></td><td>NUNCA deixe o aluno sozinho. Ligue para a escola imediatamente. Aguarde instrução.</td></tr>
+        <tr><td><strong>⚠️ Área de risco</strong></td><td>Comunique à escola antes de entrar na área. Aguarde orientação. Registre.</td></tr>
+        <tr><td><strong>🔧 Van com problema</strong></td><td>Ligue para a escola. NUNCA deixe os alunos desacompanhados enquanto aguarda socorro.</td></tr>
+      </table>
+      <div class="emergencia" style="margin-top:14px">
+        <div class="em-card" style="background:#fee2e2"><h4 style="color:#991b1b">SAMU</h4><p style="color:#991b1b">192</p></div>
+        <div class="em-card" style="background:#fee2e2"><h4 style="color:#991b1b">Bombeiros</h4><p style="color:#991b1b">193</p></div>
+        <div class="em-card" style="background:var(--marrom3);grid-column:1/-1"><h4 style="color:var(--marrom)">Direção — Mário Junior</h4><p style="color:var(--marrom);font-size:.95rem">(21) 99077-9685</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-cab" style="background:linear-gradient(90deg,var(--verde),#40916c)">
+      <div class="ico">✅</div>
+      <div><h2>Checklist Diário do Monitor</h2><p>Antes e durante a rota</p></div>
+    </div>
+    <div class="secao-body">
+      <p style="font-size:.8rem;font-weight:700;color:var(--verde);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">☀️ Antes de sair em rota</p>
+      <div class="check-item"><div class="check-box"></div><p>Verifique no painel os alunos do seu turno e van</p></div>
+      <div class="check-item"><div class="check-box"></div><p>Confirme os horários de entrada e saída de cada aluno</p></div>
+      <div class="check-item"><div class="check-box"></div><p>Note quais alunos têm ♿ (cadeirante/mobilidade reduzida)</p></div>
+      <p style="font-size:.8rem;font-weight:700;color:var(--verde);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.5px">🚐 Durante a rota</p>
+      <div class="check-item"><div class="check-box"></div><p>Use o botão 🗺️ Ir para navegação até cada endereço</p></div>
+      <div class="check-item"><div class="check-box"></div><p>Desça do veículo e vá até o portão do aluno na entrega</p></div>
+      <div class="check-item"><div class="check-box"></div><p>Confirme com o responsável na entrega</p></div>
+      <div class="check-item"><div class="check-box"></div><p>Registre imediatamente qualquer ocorrência pelo painel</p></div>
+      <p style="font-size:.8rem;font-weight:700;color:var(--verde);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.5px">🏁 Ao finalizar a rota</p>
+      <div class="check-item"><div class="check-box"></div><p>Comunique à escola qualquer situação não resolvida</p></div>
+      <div class="check-item"><div class="check-box"></div><p>Assine o registro diário de transporte</p></div>
+      <div class="alerta ok" style="margin-top:14px"><span>🛡️</span><div><strong>Proteção jurídica:</strong> Todo registro feito pelo painel fica salvo permanentemente com data, horário e seu nome. Isso protege você de qualquer acusação indevida. <strong>REGISTRE SEMPRE.</strong></div></div>
+    </div>
+  </div>
+
+</div><!-- fim monitor -->
+
+<!-- ══════════════════════════
+     DIREÇÃO / SECRETARIA
+══════════════════════════ -->
+<div id="tut-dir" class="conteudo">
+
+  <div class="secao">
+    <div class="secao-cab" style="background:linear-gradient(90deg,var(--verde),#40916c)">
+      <div class="ico">🖥️</div>
+      <div><h2>Painel da Direção / Secretaria</h2><p>Visão geral das abas</p></div>
+    </div>
+    <div class="secao-body">
+      <div style="background:var(--marrom3);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:.83rem">
+        <strong>🔗 Link:</strong> <code>emreginacelicr25-code.github.io/transporte-escolar/</code>
+      </div>
+      <table>
+        <tr><th style="background:var(--marrom3);color:var(--marrom)">Aba</th><th style="background:var(--marrom3);color:var(--marrom)">O que faz</th></tr>
+        <tr><td>🗺️ <strong>Mapa de Rotas</strong></td><td>Mapa interativo com todos os alunos. Filtrar por van e horário.</td></tr>
+        <tr><td>📋 <strong>Alunos por Van</strong></td><td>Lista completa com turma, endereço, CID e horários. Busca por nome.</td></tr>
+        <tr><td>👥 <strong>Gestão de Monitores</strong></td><td>Painel T1/T2 com status. Alerta automático de licenças e sugestões de cobertura.</td></tr>
+        <tr><td>📊 <strong>Capacidade</strong></td><td>Ocupação de cada van por horário. Vagas disponíveis e vans cheias.</td></tr>
+        <tr><td>📝 <strong>Reg. Monitores</strong></td><td>Todos os registros enviados pelos monitores com detalhes completos.</td></tr>
+        <tr><td>👨‍👩‍👧 <strong>Responsáveis</strong></td><td>Lançar relatos recebidos de famílias: reclamações, elogios, atrasos.</td></tr>
+        <tr><td>🏫 <strong>Secretaria</strong></td><td>Registrar ocorrências institucionais e comunicados à SME.</td></tr>
+        <tr><td>📧 <strong>COTRAN/SME</strong></td><td>Gerar e-mail formal para o COTRAN/SME com base nos registros.</td></tr>
+        <tr><td>⚙️ <strong>Editar Dados</strong></td><td>Adicionar/editar/remover alunos, monitores e vans. Localização WhatsApp.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-cab" style="background:linear-gradient(90deg,var(--verde),#40916c)">
+      <div class="ico">👤</div>
+      <div><h2>Gerenciando Alunos</h2><p>Adicionar, editar e atualizar localização</p></div>
+    </div>
+    <div class="secao-body">
+      <div class="passos">
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--verde)">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Vá em ⚙️ Editar Dados → Gerenciar Alunos</h4></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--verde)">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Toque em "+ Novo Aluno"</h4><p>Preencha: nome, turma, endereço, CID/deficiência, van e horários.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--verde)">3</div></div>
+          <div class="passo-txt"><h4>Localização via WhatsApp</h4><p>No formulário, cole o link de localização enviado pelo responsável → toque em "Extrair". O marcador no mapa fica verde automaticamente.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-cab" style="background:linear-gradient(90deg,var(--verde),#40916c)">
+      <div class="ico">👥</div>
+      <div><h2>Gerenciando Monitores e Vans</h2><p>Atualizações e alertas automáticos</p></div>
+    </div>
+    <div class="secao-body">
+      <div class="passos">
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--verde)">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Vá em ⚙️ Editar Dados → Gerenciar Vans e Monitores</h4></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--verde)">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Toque no lápis ✏️ da van que quer editar</h4><p>Atualize motorista, monitor T1 e monitor T2. Situações: Ativo / Licença Médica / Férias / Vaga em aberto.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--verde)">3</div></div>
+          <div class="passo-txt"><h4>Banner de atenção automático</h4><p>Ao marcar "Licença Médica" ou "Férias", um banner amarelo aparece no topo com o nome do monitor e sugestões de cobertura.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-cab" style="background:linear-gradient(90deg,var(--azul),#2e75b6)">
+      <div class="ico">📧</div>
+      <div><h2>Gerando E-mail para o COTRAN/SME</h2><p>Comunicação oficial automática</p></div>
+    </div>
+    <div class="secao-body">
+      <div class="passos">
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--azul)">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Vá na aba 📧 COTRAN/SME</h4><p>Pode selecionar um registro existente ou preencher manualmente.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--azul)">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Selecione o registro e gere o rascunho</h4><p>Toque em "Gerar Rascunho". O sistema cria o e-mail formal completo com cabeçalho institucional e base legal.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--azul)">3</div></div>
+          <div class="passo-txt"><h4>Copiar ou abrir no e-mail</h4><p>"📋 Copiar texto" para colar em qualquer app, ou "✉️ Abrir no e-mail" com destinatário já preenchido.</p>
+          <div class="dica" style="background:#dbeafe;border-left:3px solid #93c5fd;color:#1e3a5f">
+            📧 COTRAN/SME: <strong>cotran@duquedecaxias.rj.gov.br</strong>
+          </div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-cab" style="background:linear-gradient(90deg,var(--verde),#40916c)">
+      <div class="ico">💾</div>
+      <div><h2>Salvando e Publicando Alterações</h2><p>Como manter o sistema atualizado</p></div>
+    </div>
+    <div class="secao-body">
+      <div class="passos">
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--verde)">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Faça as edições necessárias</h4><p>Adicionar alunos, editar vans, atualizar monitores, inserir localização WhatsApp.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--verde)">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Toque em ☁️ Sincronizar com Banco</h4><p>Salva alunos e vans no banco de dados Supabase.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--verde)">3</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Toque em ⬇️ Baixar Arquivos</h4><p>Gera e baixa index.html + monitor.html com todos os dados atualizados.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--verde)">4</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Faça upload no GitHub</h4><p>Acesse github.com/emreginacelicr25-code/transporte-escolar → Add file → Upload files → suba os dois arquivos → Commit changes.</p></div></div>
+        <div class="passo"><div class="passo-esq"><div class="passo-num" style="background:var(--verde)">5</div></div>
+          <div class="passo-txt"><h4>Aguarde 1 minuto</h4><p>O GitHub Pages publica automaticamente. Recarregue o site para ver as mudanças.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-cab" style="background:linear-gradient(90deg,var(--marrom),var(--marrom2))">
+      <div class="ico">🚐</div>
+      <div><h2>Equipe de Transporte</h2><p>Vans e monitores cadastrados</p></div>
+    </div>
+    <div class="secao-body">
+      <div class="van-grid">
+        <div class="van-card"><h4>🚌 Van C1</h4><p>Motorista: Anderson<br>Monitor T1: Vinicius<br>Monitor T2: Cláudia<br><em>Comum · 11 alunos</em></p></div>
+        <div class="van-card"><h4>🚌 Van C2</h4><p>Motorista: Aguinaldo<br>Monitor T1: Verônica<br>Monitor T2: Sulamita<br><em>Comum · 11 alunos</em></p></div>
+        <div class="van-card"><h4>🚌 Van C3</h4><p>Motorista: Edilson<br>Monitor T1: Estephani<br>Monitor T2: Vaga em aberto<br><em>Comum · 11 alunos</em></p></div>
+        <div class="van-card van-ad"><h4>♿ Van AD1</h4><p>Motorista: Márcio<br>Monitor T1: Lavinia<br>Monitor T2: Adrielle<br><em>Adaptada · 6 alunos</em></p></div>
+        <div class="van-card van-ad"><h4>♿ Van AD2</h4><p>Motorista: Josivan<br>Monitor T1: Marcia<br>Monitor T2: Izabelle<br><em>Adaptada · 6 alunos</em></p></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- fim dir -->
+
+<footer>
+  Sistema de Transporte Escolar Inclusivo · E.M. Regina Celi da Silva Cerdeira · Duque de Caxias, RJ · 2026<br>
+  Tutorial oficial · Uso interno exclusivo
+</footer>
+
+<script>
+function mostrar(perfil) {
+  document.querySelectorAll('.conteudo').forEach(el=>el.classList.remove('visivel'));
+  document.querySelectorAll('.perfil-btn').forEach(el=>el.classList.remove('ativo'));
+  document.getElementById('tut-'+perfil).classList.add('visivel');
+  const idx = ['mon','dir'].indexOf(perfil);
+  const btns = document.querySelectorAll('.perfil-btn');
+  if(btns[idx]) btns[idx].classList.add('ativo');
+  setTimeout(()=>{
+    document.getElementById('tut-'+perfil).scrollIntoView({behavior:'smooth',block:'start'});
+  },100);
+}
+mostrar('mon');
+</script>
+</body>
+</html>

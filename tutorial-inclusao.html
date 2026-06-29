@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial da Plataforma de Inclusão – E.M. Regina Celi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#F0F4F8;color:#1A202C;line-height:1.6}
+
+  /* ── CAPA ── */
+  .capa{
+    background:linear-gradient(135deg,#1A3A6E 0%,#2E75B6 60%,#5BA3D9 100%);
+    padding:60px 24px 80px;text-align:center;position:relative;overflow:hidden
+  }
+  .capa::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;
+    border-radius:50%;background:rgba(255,255,255,.05)}
+  .capa::after{content:'';position:absolute;bottom:-100px;left:-60px;width:320px;height:320px;
+    border-radius:50%;background:rgba(255,255,255,.04)}
+  .capa-label{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);
+    color:#fff;border-radius:30px;padding:6px 18px;font-size:11px;font-weight:700;
+    letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px}
+  .capa h1{font-size:36px;font-weight:900;color:#fff;margin-bottom:10px;line-height:1.15}
+  .capa h1 span{color:#BDD7EE}
+  .capa p{font-size:15px;color:rgba(255,255,255,.85);max-width:520px;margin:0 auto 30px}
+  .capa-escola{background:rgba(255,255,255,.13);border-radius:12px;padding:14px 24px;
+    display:inline-block;color:#fff;font-size:12px;margin-bottom:28px}
+  .capa-escola strong{display:block;font-size:14px;margin-top:2px}
+
+  /* ── SELETOR DE PERFIL ── */
+  .seletor{max-width:760px;margin:-40px auto 0;padding:0 20px;position:relative;z-index:10}
+  .seletor-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .perfil-btn{background:#fff;border-radius:14px;padding:22px 16px;text-align:center;
+    cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.12);
+    border:3px solid transparent;transition:all .2s;user-select:none}
+  .perfil-btn:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.15)}
+  .perfil-btn.ativo{border-color:var(--cor)}
+  .perfil-btn .icon{font-size:36px;margin-bottom:10px}
+  .perfil-btn h3{font-size:14px;font-weight:700;color:#1A202C;margin-bottom:4px}
+  .perfil-btn p{font-size:11px;color:#888;line-height:1.5}
+  .perfil-btn .badge{display:inline-block;border-radius:20px;padding:3px 10px;
+    font-size:10px;font-weight:700;margin-top:8px;color:#fff}
+
+  /* ── CONTEÚDO ── */
+  .conteudo{max-width:860px;margin:0 auto;padding:40px 20px 80px;display:none}
+  .conteudo.visivel{display:block}
+
+  /* ── SEÇÕES ── */
+  .secao{margin-bottom:48px}
+  .secao-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;
+    margin-bottom:6px}
+  .secao h2{font-size:26px;font-weight:800;color:#1A202C;margin-bottom:6px}
+  .secao-desc{font-size:14px;color:#4A5568;margin-bottom:28px;max-width:620px}
+
+  /* ── CARTÕES ── */
+  .cards{display:grid;gap:16px}
+  .cards-2{grid-template-columns:1fr 1fr}
+  .cards-3{grid-template-columns:1fr 1fr 1fr}
+  .card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 8px rgba(0,0,0,.07)}
+  .card-icon{font-size:28px;margin-bottom:10px}
+  .card h3{font-size:14px;font-weight:700;color:#1A202C;margin-bottom:5px}
+  .card p{font-size:13px;color:#4A5568;line-height:1.7}
+
+  /* ── PASSOS ── */
+  .passo{display:flex;gap:16px;align-items:flex-start;margin-bottom:24px}
+  .passo-num{width:40px;height:40px;border-radius:50%;color:#fff;font-size:16px;
+    font-weight:800;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+  .passo-corpo h3{font-size:14px;font-weight:700;color:#1A202C;margin-bottom:4px}
+  .passo-corpo p{font-size:13px;color:#4A5568;line-height:1.7}
+  .dica{border-radius:0 8px 8px 0;padding:8px 12px;margin-top:8px;font-size:12px;font-weight:500}
+
+  /* ── MOCK TELA ── */
+  .mock{background:#1A202C;border-radius:14px;padding:5px;
+    box-shadow:0 8px 28px rgba(0,0,0,.2);margin:24px 0}
+  .mock-bar{background:#2D3748;border-radius:10px 10px 0 0;padding:7px 12px;
+    display:flex;align-items:center;gap:7px}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .url-bar{flex:1;background:#4A5568;border-radius:4px;height:14px;margin:0 8px}
+  .mock-tela{border-radius:0 0 10px 10px;padding:14px;min-height:180px}
+
+  /* ── ALERTAS ── */
+  .alerta{border-radius:10px;padding:14px 16px;display:flex;gap:12px;
+    align-items:flex-start;margin:14px 0}
+  .alerta-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .alerta h4{font-size:13px;font-weight:700;margin-bottom:3px}
+  .alerta p{font-size:12px;color:#4A5568;line-height:1.6}
+
+  /* ── TABELA ── */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{padding:9px 12px;text-align:left;font-size:11px;color:#fff}
+  td{padding:9px 12px;border-bottom:1px solid #F0F0F0;font-size:12px}
+  tr:nth-child(even) td{background:#F8FAFC}
+
+  /* ── DIVISOR ── */
+  .div{height:1px;margin:0 0 48px;opacity:.3}
+
+  /* ── LINK DESTAQUE ── */
+  .link-box{border-radius:12px;padding:18px 22px;display:flex;
+    align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  .link-url{font-family:monospace;font-size:15px;font-weight:700}
+
+  /* ── RODAPÉ ── */
+  footer{background:#1A2744;color:#fff;padding:32px 24px;text-align:center}
+  footer p{font-size:13px;opacity:.7}
+
+  @media(max-width:700px){
+    .seletor-grid,.cards-2,.cards-3{grid-template-columns:1fr}
+    .capa h1{font-size:24px}
+  }
+</style>
+</head>
+<body>
+
+<!-- CAPA -->
+<div class="capa">
+  <div class="capa-label">📋 Tutorial Oficial · 2026</div>
+  <h1>Plataforma de <span>Inclusão Digital</span></h1>
+  <p>Guia completo de uso para todos os perfis da escola. Selecione abaixo o seu perfil para ver o tutorial correspondente.</p>
+  <div class="capa-escola">
+    Estado do Rio de Janeiro · Prefeitura Municipal de Duque de Caxias · SME
+    <strong>E.M. Regina Celi da Silva Cerdeira – Centro de Referência em Educação Inclusiva</strong>
+  </div>
+</div>
+
+<!-- SELETOR DE PERFIL -->
+<div class="seletor">
+  <div class="seletor-grid">
+    <div class="perfil-btn" style="--cor:#1A3A6E" onclick="mostrar('prof')">
+      <div class="icon">👤</div>
+      <h3>Profissional de Apoio</h3>
+      <p>AAI 1 (Mediador), AAI 2 (Cuidador) e Aux. Ed. Infantil</p>
+      <span class="badge" style="background:#1A3A6E">Ver tutorial →</span>
+    </div>
+    <div class="perfil-btn" style="--cor:#6A0572" onclick="mostrar('sec')">
+      <div class="icon">🗂️</div>
+      <h3>Secretaria Escolar</h3>
+      <p>Impressão e arquivamento de documentos</p>
+      <span class="badge" style="background:#6A0572">Ver tutorial →</span>
+    </div>
+    <div class="perfil-btn" style="--cor:#1A3A6E" onclick="mostrar('dir')">
+      <div class="icon">🔑</div>
+      <h3>Equipe Diretiva</h3>
+      <p>Direção, Orientação Pedagógica e Educacional</p>
+      <span class="badge" style="background:#1565C0">Ver tutorial →</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TUTORIAL: PROFISSIONAL DE APOIO
+══════════════════════════════════════════ -->
+<div id="tut-prof" class="conteudo">
+
+  <!-- Cabeçalho do perfil -->
+  <div style="background:linear-gradient(135deg,#1A3A6E,#2E75B6);border-radius:16px;padding:28px 32px;color:#fff;margin-bottom:36px">
+    <div style="font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Tutorial · Profissional de Apoio</div>
+    <div style="font-size:24px;font-weight:900;margin-bottom:8px">👤 AAI 1 (Mediador) · AAI 2 (Cuidador) · Aux. Ed. Infantil</div>
+    <p style="opacity:.88;font-size:14px">Este tutorial explica como fazer seu Registro Diário, registrar uma Ocorrência e preencher a Escala Semanal (AAI 1).</p>
+  </div>
+
+  <!-- Link de acesso -->
+  <div class="secao">
+    <div class="link-box" style="background:#E8F4FD;border:2px solid #1A3A6E">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#1A3A6E;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🔗 Link da Plataforma</div>
+        <div class="link-url" style="color:#1A3A6E">plataforma-inclusao-rcsc.vercel.app</div>
+        <div style="font-size:12px;color:#555;margin-top:4px">Acesse pelo celular ou computador, qualquer navegador</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div" style="background:#1A3A6E"></div>
+
+  <!-- COMO ACESSAR -->
+  <div class="secao">
+    <div class="secao-label" style="color:#1A3A6E">Passo a passo</div>
+    <h2>Como entrar na plataforma</h2>
+    <p class="secao-desc">O acesso é simples — não precisa de senha. Cada profissional entra pelo seu próprio nome.</p>
+
+    <div class="passo">
+      <div class="passo-num" style="background:#1A3A6E">1</div>
+      <div class="passo-corpo">
+        <h3>Abra o link no navegador</h3>
+        <p>Acesse <strong>plataforma-inclusao-rcsc.vercel.app</strong> no celular ou computador. A tela de login aparecerá.</p>
+        <div class="dica" style="background:#E8F4FD;border-left:3px solid #1A3A6E;color:#1A3A6E">💡 Salve o link nos favoritos para acessar mais rápido todo dia.</div>
+      </div>
+    </div>
+    <div class="passo">
+      <div class="passo-num" style="background:#1A3A6E">2</div>
+      <div class="passo-corpo">
+        <h3>Clique em "👤 Sou Profissional"</h3>
+        <p>Na tela inicial aparecem três botões. Clique em <strong>Sou Profissional</strong> — nunca nos outros dois.</p>
+      </div>
+    </div>
+    <div class="passo">
+      <div class="passo-num" style="background:#1A3A6E">3</div>
+      <div class="passo-corpo">
+        <h3>Clique no seu nome</h3>
+        <p>Aparecerá a lista com todos os profissionais. Encontre e clique no <strong>seu nome</strong>. Ele ficará destacado.</p>
+        <div class="dica" style="background:#FFF3E0;border-left:3px solid #E65100;color:#7B4800">⚠️ Não clique no nome de outro profissional — cada registro fica vinculado ao nome selecionado.</div>
+      </div>
+    </div>
+    <div class="passo">
+      <div class="passo-num" style="background:#1A3A6E">4</div>
+      <div class="passo-corpo">
+        <h3>Clique em "Acessar meu painel"</h3>
+        <p>Seu Painel Pessoal abrirá com seus alunos, números de registros e ações rápidas.</p>
+      </div>
+    </div>
+
+    <!-- Mock tela login -->
+    <div class="mock">
+      <div class="mock-bar">
+        <div class="dot" style="background:#FF5F57"></div>
+        <div class="dot" style="background:#FFBD2E"></div>
+        <div class="dot" style="background:#28C840"></div>
+        <div class="url-bar"></div>
+      </div>
+      <div class="mock-tela" style="background:#F4F6FB">
+        <div style="max-width:400px;margin:0 auto;background:#fff;border-radius:12px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,.1)">
+          <div style="text-align:center;margin-bottom:14px">
+            <div style="font-size:28px">🏫</div>
+            <div style="font-weight:800;font-size:13px;color:#1A3A6E">E.M. Regina Celi da Silva Cerdeira</div>
+            <div style="font-size:10px;color:#888">Sistema de Acompanhamento da Inclusão · 2026</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">
+            <div style="border:2px solid #1A3A6E;border-radius:8px;padding:8px;text-align:center;background:#E8F4FD">
+              <div style="font-size:16px">👤</div>
+              <div style="font-size:9px;font-weight:700;color:#1A3A6E">Sou Profissional</div>
+            </div>
+            <div style="border:2px solid #ddd;border-radius:8px;padding:8px;text-align:center">
+              <div style="font-size:16px">🗂️</div>
+              <div style="font-size:9px;color:#888">Secretaria</div>
+            </div>
+            <div style="border:2px solid #ddd;border-radius:8px;padding:8px;text-align:center">
+              <div style="font-size:16px">🔑</div>
+              <div style="font-size:9px;color:#888">Direção</div>
+            </div>
+          </div>
+          <div style="background:#E8F4FD;border:2px solid #1A3A6E;border-radius:7px;padding:6px 10px;font-size:10px;font-weight:700;color:#1A3A6E;margin-bottom:4px">✓ Luciana Teles Barbosa — Turmas 101, 502</div>
+          <div style="border:1px solid #ddd;border-radius:7px;padding:6px 10px;font-size:10px;color:#555;margin-bottom:4px">Anna Julia Martins dos Santos — Turma 201</div>
+          <div style="border:1px solid #ddd;border-radius:7px;padding:6px 10px;font-size:10px;color:#555;margin-bottom:8px">Solange Pereira da Fonte — Turmas 202, 302</div>
+          <div style="background:#1A3A6E;color:#fff;border-radius:7px;padding:8px;text-align:center;font-size:11px;font-weight:700">Acessar meu painel →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div" style="background:#1A3A6E"></div>
+
+  <!-- REGISTRO DIÁRIO -->
+  <div class="secao">
+    <div class="secao-label" style="color:#1A3A6E">Função principal</div>
+    <h2>📝 Como fazer o Registro Diário</h2>
+    <p class="secao-desc">O registro diário deve ser feito <strong>ao final de cada turno</strong>, antes de sair da escola. Faça um registro por aluno.</p>
+
+    <div class="alerta" style="background:#FFF8E1;border-left:4px solid #F57F17">
+      <div class="alerta-icon">⏰</div>
+      <div><h4>Quando registrar?</h4><p>Ao final do turno de trabalho — antes de sair da escola. Não deixe acumular para o dia seguinte. O registro tardio perde valor documental.</p></div>
+    </div>
+
+    <div class="passo">
+      <div class="passo-num" style="background:#1A3A6E">1</div>
+      <div class="passo-corpo">
+        <h3>No menu, clique em "📝 Registro Diário"</h3>
+        <p>O formulário abrirá. Comece selecionando o nome do aluno e confirmando a data.</p>
+      </div>
+    </div>
+    <div class="passo">
+      <div class="passo-num" style="background:#1A3A6E">2</div>
+      <div class="passo-corpo">
+        <h3>Selecione o aluno</h3>
+        <p>Os alunos da sua turma já aparecem na lista. Selecione o aluno que está registrando.</p>
+        <div class="dica" style="background:#E8F5E9;border-left:3px solid #2E7D32;color:#1B5E20">✅ Se atendeu um aluno fora da sua designação, selecione "🔄 Cobertura / Substituição" e informe o motivo.</div>
+      </div>
+    </div>
+    <div class="passo">
+      <div class="passo-num" style="background:#1A3A6E">3</div>
+      <div class="passo-corpo">
+        <h3>Preencha os 5 campos</h3>
+        <p>O formulário tem 5 seções. Preencha cada uma com cuidado:</p>
+      </div>
+    </div>
+
+    <div class="cards cards-2" style="margin:0 0 24px 56px">
+      <div class="card" style="border-left:4px solid #1A3A6E">
+        <div class="card-icon">⏱️</div>
+        <h3>1. Frequência e Horário</h3>
+        <p>O aluno chegou e saiu no horário? Se houve atraso ou saída antecipada, informe.</p>
+      </div>
+      <div class="card" style="border-left:4px solid #2E7D32">
+        <div class="card-icon">📚</div>
+        <h3>2. Atividades</h3>
+        <p>Para cada área (pedagógica, alimentação, higiene, social, pátio), marque ✅ realizada ou ❌ dificuldade.</p>
+      </div>
+      <div class="card" style="border-left:4px solid #6A0572">
+        <div class="card-icon">😊</div>
+        <h3>3. Comportamento</h3>
+        <p>Selecione o humor predominante: Calmo, Agitado, Apático ou Responsivo. Houve crise? Informe.</p>
+      </div>
+      <div class="card" style="border-left:4px solid #B45309">
+        <div class="card-icon">📋</div>
+        <h3>4. Observações</h3>
+        <p>Espaço livre para saúde, material, recados, mudanças de comportamento ou conquistas do aluno.</p>
+      </div>
+      <div class="card" style="border-left:4px solid #2E7D32;grid-column:1/-1">
+        <div class="card-icon">🤲</div>
+        <h3>5. Protocolo "Mão Segura" (obrigatório para S1)</h3>
+        <p>Informe para quem o aluno foi entregue e o horário. Regra de ouro: <strong>nenhum aluno pode ser deixado sem que o próximo responsável tenha assumido.</strong></p>
+      </div>
+    </div>
+
+    <div class="passo">
+      <div class="passo-num" style="background:#2E7D32">4</div>
+      <div class="passo-corpo">
+        <h3>Clique em "Salvar Registro"</h3>
+        <p>Uma mensagem verde confirmará: <em>"✅ Registro salvo! Disponível para impressão na Secretaria Escolar."</em></p>
+      </div>
+    </div>
+
+    <div class="alerta" style="background:#E8F5E9;border-left:4px solid #2E7D32">
+      <div class="alerta-icon">💡</div>
+      <div><h4>Como escrever bem o relato</h4><p><strong>Não:</strong> "Ele estava ruim hoje." &nbsp;|&nbsp; <strong>Sim:</strong> "Recusou a atividade de escrita e permaneceu de pé por 10 minutos." Seja descritivo, não opinativo. Registre também conquistas!</p></div>
+    </div>
+  </div>
+
+  <div class="div" style="background:#1A3A6E"></div>
+
+  <!-- OCORRÊNCIA -->
+  <div class="secao">
+    <div class="secao-label" style="color:#D32F2F">Situações graves</div>
+    <h2>⚠️ Como registrar uma Ocorrência Crítica</h2>
+    <p class="secao-desc">Use somente para situações fora do comum. Este documento tem valor jurídico e protege você e a escola.</p>
+
+    <div class="cards cards-3" style="margin-bottom:20px">
+      <div class="card" style="border-top:4px solid #D32F2F">
+        <div class="card-icon">😤</div>
+        <h3>Quando usar?</h3>
+        <p>Crise de agitação, convulsão, autolesão, agressividade, qualquer situação que exigiu intervenção da direção.</p>
+      </div>
+      <div class="card" style="border-top:4px solid #1A3A6E">
+        <div class="card-icon">✍️</div>
+        <h3>Como escrever?</h3>
+        <p>Apenas fatos observáveis, sem julgamentos. "Jogou o material no chão às 09h15" — não "ficou impossível".</p>
+      </div>
+      <div class="card" style="border-top:4px solid #2E7D32">
+        <div class="card-icon">📄</div>
+        <h3>O que acontece depois?</h3>
+        <p>A secretaria imprime e você será chamado para assinar. O responsável pelo aluno também assina.</p>
+      </div>
+    </div>
+
+    <div class="alerta" style="background:#FFF8E1;border-left:4px solid #F57F17">
+      <div class="alerta-icon">⚖️</div>
+      <div><h4>Valor jurídico e pedagógico</h4><p>A ata de ocorrência prova que a escola e você agiram corretamente, protege contra acusações e ajuda os especialistas do aluno (psicólogo, neurologista) a ajustarem o tratamento.</p></div>
+    </div>
+  </div>
+
+  <div class="div" style="background:#1A3A6E"></div>
+
+  <!-- ESCALA (AAI 1) -->
+  <div class="secao">
+    <div style="display:inline-block;background:#E8F4FD;color:#1A3A6E;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;margin-bottom:10px">Somente para AAI 1 – Mediador</div>
+    <h2>📅 Como preencher a Escala Semanal</h2>
+    <p class="secao-desc">Preencha toda <strong>segunda-feira</strong>, antes de iniciar o atendimento. A escala organiza quem cuida de quem em cada momento do dia.</p>
+
+    <div class="cards cards-2">
+      <div class="card" style="border-left:4px solid #2E7D32">
+        <div class="card-icon">📋</div>
+        <h3>O que preencher</h3>
+        <p>Período da semana, turno, grade de alocação por aluno e observações por dia da semana (ausências, trocas, eventos).</p>
+      </div>
+      <div class="card" style="border-left:4px solid #1A3A6E">
+        <div class="card-icon">⏱️</div>
+        <h3>Momentos críticos</h3>
+        <p>A escala também traz o cronograma de transições: entrada, recreio, retorno à sala e saída. Confira os horários da sua turma.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Papel e limites -->
+  <div class="secao">
+    <div class="secao-label" style="color:#D32F2F">Limites de atuação</div>
+    <h2>O que é e o que não é seu papel</h2>
+    <div class="cards cards-3">
+      <div class="card">
+        <div style="font-size:22px;margin-bottom:8px">📚</div>
+        <h3 style="color:#1A3A6E">AAI 1 – Mediador</h3>
+        <div style="background:#E8F5E9;border-radius:7px;padding:8px 10px;margin-bottom:8px">
+          <div style="font-size:10px;font-weight:700;color:#2E7D32;margin-bottom:3px">✅ FAZ</div>
+          <p>Suporte pedagógico e autonomia do aluno em sala.</p>
+        </div>
+        <div style="background:#FFF5F5;border-radius:7px;padding:8px 10px">
+          <div style="font-size:10px;font-weight:700;color:#D32F2F;margin-bottom:3px">⛔ NÃO FAZ</div>
+          <p>Troca de fraldas, higiene exclusiva, alimentação forçada.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:22px;margin-bottom:8px">🤝</div>
+        <h3 style="color:#2E7D32">AAI 2 – Cuidador</h3>
+        <div style="background:#E8F5E9;border-radius:7px;padding:8px 10px;margin-bottom:8px">
+          <div style="font-size:10px;font-weight:700;color:#2E7D32;margin-bottom:3px">✅ FAZ</div>
+          <p>Higiene, alimentação, conforto físico e bem-estar do aluno.</p>
+        </div>
+        <div style="background:#FFF5F5;border-radius:7px;padding:8px 10px">
+          <div style="font-size:10px;font-weight:700;color:#D32F2F;margin-bottom:3px">⛔ NÃO FAZ</div>
+          <p>Mediação pedagógica ou intervenções educacionais.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:22px;margin-bottom:8px">🌟</div>
+        <h3 style="color:#6A0572">Aux. Ed. Infantil</h3>
+        <div style="background:#E8F5E9;border-radius:7px;padding:8px 10px;margin-bottom:8px">
+          <div style="font-size:10px;font-weight:700;color:#2E7D32;margin-bottom:3px">✅ FAZ</div>
+          <p>Auxílio colaborativo sob supervisão do professor regente.</p>
+        </div>
+        <div style="background:#FFF5F5;border-radius:7px;padding:8px 10px">
+          <div style="font-size:10px;font-weight:700;color:#D32F2F;margin-bottom:3px">⛔ NÃO FAZ</div>
+          <p>Decisões pedagógicas sem supervisão do professor.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- fim prof -->
+
+
+<!-- ══════════════════════════════════════════
+     TUTORIAL: SECRETARIA ESCOLAR
+══════════════════════════════════════════ -->
+<div id="tut-sec" class="conteudo">
+
+  <div style="background:linear-gradient(135deg,#6A0572,#9B27AF);border-radius:16px;padding:28px 32px;color:#fff;margin-bottom:36px">
+    <div style="font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Tutorial · Secretaria Escolar</div>
+    <div style="font-size:24px;font-weight:900;margin-bottom:8px">🗂️ Gestão de Impressão e Arquivo</div>
+    <p style="opacity:.88;font-size:14px">A secretaria não preenche formulários. Sua função é receber, imprimir, coletar assinaturas e arquivar os documentos gerados pelos profissionais.</p>
+  </div>
+
+  <div class="secao">
+    <div class="link-box" style="background:#F3E5F5;border:2px solid #6A0572">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#6A0572;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🔗 Link da Plataforma</div>
+        <div class="link-url" style="color:#6A0572">plataforma-inclusao-rcsc.vercel.app</div>
+      </div>
+      <div style="background:#6A0572;color:#fff;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700">
+        Senha: direcao2026
+      </div>
+    </div>
+  </div>
+
+  <div class="div" style="background:#6A0572"></div>
+
+  <div class="secao">
+    <div class="secao-label" style="color:#6A0572">Acesso</div>
+    <h2>Como entrar na plataforma</h2>
+
+    <div class="passo">
+      <div class="passo-num" style="background:#6A0572">1</div>
+      <div class="passo-corpo"><h3>Abra o link no navegador</h3><p>Acesse <strong>plataforma-inclusao-rcsc.vercel.app</strong>. Recomendamos salvar nos favoritos.</p></div>
+    </div>
+    <div class="passo">
+      <div class="passo-num" style="background:#6A0572">2</div>
+      <div class="passo-corpo"><h3>Clique em "🗂️ Secretaria Escolar"</h3><p>Não clique em "Profissional" nem em "Equipe Diretiva".</p></div>
+    </div>
+    <div class="passo">
+      <div class="passo-num" style="background:#6A0572">3</div>
+      <div class="passo-corpo">
+        <h3>Digite a senha e entre</h3>
+        <p>Senha: <strong>direcao2026</strong>. Clique em "Acessar Gestão de Impressão".</p>
+        <div class="dica" style="background:#F3E5F5;border-left:3px solid #6A0572;color:#4A148C">🔒 A senha pode ser atualizada pela direção quando necessário.</div>
+      </div>
+    </div>
+    <div class="passo">
+      <div class="passo-num" style="background:#6A0572">4</div>
+      <div class="passo-corpo"><h3>A Gestão de Impressão abre automaticamente</h3><p>Você verá três abas: Registros Diários, Ocorrências e Escalas Semanais.</p></div>
+    </div>
+  </div>
+
+  <div class="div" style="background:#6A0572"></div>
+
+  <div class="secao">
+    <div class="secao-label" style="color:#6A0572">Impressão</div>
+    <h2>🖨️ Como imprimir um documento</h2>
+
+    <div class="passo">
+      <div class="passo-num" style="background:#6A0572">1</div>
+      <div class="passo-corpo"><h3>Selecione a aba correta</h3><p>Escolha entre Registros Diários, Ocorrências ou Escalas Semanais.</p></div>
+    </div>
+    <div class="passo">
+      <div class="passo-num" style="background:#6A0572">2</div>
+      <div class="passo-corpo">
+        <h3>Localize o documento</h3>
+        <p>Use o campo de busca para filtrar pelo nome do aluno ou profissional. Os mais recentes aparecem primeiro.</p>
+        <div class="dica" style="background:#F3E5F5;border-left:3px solid #6A0572;color:#4A148C">🔍 Digite as primeiras letras do nome do aluno para filtrar rapidamente.</div>
+      </div>
+    </div>
+    <div class="passo">
+      <div class="passo-num" style="background:#6A0572">3</div>
+      <div class="passo-corpo"><h3>Clique em "🖨️ Imprimir"</h3><p>A pré-visualização em A4 abre com cabeçalho institucional e espaço para assinaturas.</p></div>
+    </div>
+    <div class="passo">
+      <div class="passo-num" style="background:#6A0572">4</div>
+      <div class="passo-corpo">
+        <h3>Clique em "Imprimir / Salvar PDF"</h3>
+        <p>O diálogo de impressão do navegador abrirá. Configuração: papel A4, orientação retrato, margens normais.</p>
+      </div>
+    </div>
+    <div class="passo">
+      <div class="passo-num" style="background:#2E7D32">5</div>
+      <div class="passo-corpo"><h3>Colete as assinaturas e arquive</h3><p>O impresso traz três linhas de assinatura. Após assinar, arquive na pasta correspondente.</p></div>
+    </div>
+  </div>
+
+  <div class="div" style="background:#6A0572"></div>
+
+  <div class="secao">
+    <div class="secao-label" style="color:#6A0572">Arquivamento</div>
+    <h2>📁 Sistema de numeração dos documentos</h2>
+    <p class="secao-desc">Cada documento recebe um número automático único. Use para organizar as pastas físicas.</p>
+
+    <div class="cards cards-3">
+      <div class="card" style="border-top:4px solid #1A3A6E;text-align:center">
+        <div style="font-size:26px;font-weight:900;font-family:monospace;color:#1A3A6E;margin-bottom:8px">RD-00001</div>
+        <h3>Registro Diário</h3>
+        <p style="margin-top:6px">Feito ao final de cada atendimento pelos profissionais.</p>
+        <div style="background:#E8F4FD;color:#1A3A6E;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;margin-top:10px">📂 Pasta de Registros de Acompanhamento</div>
+      </div>
+      <div class="card" style="border-top:4px solid #D32F2F;text-align:center">
+        <div style="font-size:26px;font-weight:900;font-family:monospace;color:#D32F2F;margin-bottom:8px">OC-00001</div>
+        <h3>Ocorrência Crítica</h3>
+        <p style="margin-top:6px">Registra episódios críticos e intervenções. Valor jurídico.</p>
+        <div style="background:#FFEBEE;color:#D32F2F;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;margin-top:10px">📂 Pasta de Ocorrências Críticas</div>
+      </div>
+      <div class="card" style="border-top:4px solid #2E7D32;text-align:center">
+        <div style="font-size:26px;font-weight:900;font-family:monospace;color:#2E7D32;margin-bottom:8px">ES-00001</div>
+        <h3>Escala Semanal</h3>
+        <p style="margin-top:6px">Grade semanal de alocação dos mediadores por aluno.</p>
+        <div style="background:#E8F5E9;color:#2E7D32;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;margin-top:10px">📂 Pasta de Escalas Semanais</div>
+      </div>
+    </div>
+
+    <div class="alerta" style="background:#FFF8E1;border-left:4px solid #F57F17;margin-top:20px">
+      <div class="alerta-icon">📅</div>
+      <div><h4>Rotina recomendada</h4><p>Verifique a plataforma diariamente ao final de cada turno para manter o arquivo físico em dia. Organize as pastas por tipo (RD / OC / ES) e por mês: <strong>RD – Junho 2026</strong>.</p></div>
+    </div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-label" style="color:#6A0572">Referência</div>
+    <h2>Quem assina cada documento</h2>
+    <div class="card" style="overflow-x:auto">
+      <table>
+        <thead style="background:#6A0572"><tr>
+          <th>Documento</th><th>Quem preenche</th><th>Quem assina</th>
+        </tr></thead>
+        <tbody>
+          <tr><td><strong style="color:#1A3A6E">RD – Registro Diário</strong></td><td>AAI 1, AAI 2 ou Ax EI</td><td>Profissional + Direção</td></tr>
+          <tr><td><strong style="color:#D32F2F">OC – Ocorrência Crítica</strong></td><td>AAI 1 ou AAI 2</td><td>Profissional + Direção + Responsável pelo aluno</td></tr>
+          <tr><td><strong style="color:#2E7D32">ES – Escala Semanal</strong></td><td>AAI 1 (Mediador)</td><td>Coordenação + Secretaria + Direção</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- fim sec -->
+
+
+<!-- ══════════════════════════════════════════
+     TUTORIAL: EQUIPE DIRETIVA
+══════════════════════════════════════════ -->
+<div id="tut-dir" class="conteudo">
+
+  <div style="background:linear-gradient(135deg,#1A3A6E,#2E75B6);border-radius:16px;padding:28px 32px;color:#fff;margin-bottom:36px">
+    <div style="font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Tutorial · Equipe Diretiva</div>
+    <div style="font-size:24px;font-weight:900;margin-bottom:8px">🔑 Direção · Orientação Pedagógica · Orientação Educacional</div>
+    <p style="opacity:.88;font-size:14px">Monitoramento completo da equipe de apoio, gestão de ocorrências, validação de escalas e Plano de Ação da inclusão.</p>
+  </div>
+
+  <div class="secao">
+    <div class="link-box" style="background:#E8F4FD;border:2px solid #1A3A6E">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#1A3A6E;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🔗 Link da Plataforma</div>
+        <div class="link-url" style="color:#1A3A6E">plataforma-inclusao-rcsc.vercel.app</div>
+      </div>
+      <div style="background:#1A3A6E;color:#fff;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700">
+        Senha: direcao2026
+      </div>
+    </div>
+  </div>
+
+  <div class="div" style="background:#1A3A6E"></div>
+
+  <div class="secao">
+    <div class="secao-label" style="color:#1A3A6E">Acesso</div>
+    <h2>Como entrar e o que você acessa</h2>
+
+    <div class="passo">
+      <div class="passo-num" style="background:#1A3A6E">1</div>
+      <div class="passo-corpo"><h3>Abra o link e clique em "🔑 Equipe Diretiva"</h3><p>Acesse <strong>plataforma-inclusao-rcsc.vercel.app</strong>, clique em Equipe Diretiva, digite a senha e entre.</p></div>
+    </div>
+
+    <div class="cards cards-3" style="margin-top:20px">
+      <div class="card" style="border-top:3px solid #1A3A6E">
+        <div class="card-icon">📊</div>
+        <h3>Painel Geral</h3>
+        <p>Visão em tempo real: registros do dia, ocorrências abertas, alertas de quem não registrou e coberturas realizadas.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #1A3A6E">
+        <div class="card-icon">👥</div>
+        <h3>Profissionais</h3>
+        <p>Quadro completo de AAI 1, AAI 2 e Ax EI: vínculo, turno, turmas e alunos designados.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #1A3A6E">
+        <div class="card-icon">📅</div>
+        <h3>Escala Semanal</h3>
+        <p>Grade de alocação semanal para validação toda segunda-feira.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #1A3A6E">
+        <div class="card-icon">📚</div>
+        <h3>Histórico</h3>
+        <p>Todos os registros diários. Filtre por profissional, aluno ou por coberturas.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #D32F2F">
+        <div class="card-icon">⚠️</div>
+        <h3>Ocorrências</h3>
+        <p>Todas as atas críticas com natureza, intervenção, desfecho e relato.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #2E7D32">
+        <div class="card-icon">📘</div>
+        <h3>Plano de Ação</h3>
+        <p>Matriz de responsabilidades, classificação S1/S2/S3 e protocolo "Mão Segura".</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="div" style="background:#1A3A6E"></div>
+
+  <div class="secao">
+    <div class="secao-label" style="color:#E65100">Atenção especial</div>
+    <h2>🔄 Alerta de Cobertura / Substituição</h2>
+    <p class="secao-desc">Quando um profissional atende um aluno fora da sua designação oficial, o sistema cria um alerta automático no painel da direção.</p>
+
+    <div class="alerta" style="background:#FFF3E0;border-left:4px solid #E65100">
+      <div class="alerta-icon">🔄</div>
+      <div><h4>O que aparece no painel</h4><p>Um bloco laranja mostrará: quem atendeu, qual aluno, quem era o profissional designado original e o motivo da cobertura (falta, remanejamento, emergência, solicitação da direção).</p></div>
+    </div>
+
+    <div class="alerta" style="background:#FFEBEE;border-left:4px solid #D32F2F">
+      <div class="alerta-icon">📋</div>
+      <div><h4>O que fazer com coberturas frequentes?</h4><p>Coberturas recorrentes de um mesmo profissional ou aluno podem indicar necessidade de revisão da designação oficial. Leve para a ETP e, se necessário, acione a SME.</p></div>
+    </div>
+  </div>
+
+  <div class="div" style="background:#1A3A6E"></div>
+
+  <div class="secao">
+    <div class="secao-label" style="color:#1A3A6E">Rotina de gestão</div>
+    <h2>📅 Rotina recomendada de uso</h2>
+
+    <div style="margin-bottom:6px"><strong style="font-size:13px;color:#1A3A6E">☀️ Segunda-feira</strong></div>
+    <div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+      <div style="width:18px;height:18px;border-radius:4px;border:2px solid #1A3A6E;flex-shrink:0;margin-top:2px"></div>
+      <p style="font-size:13px;color:#333">Validar a Escala Semanal submetida pelos mediadores e imprimir para assinatura</p>
+    </div>
+    <div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+      <div style="width:18px;height:18px;border-radius:4px;border:2px solid #1A3A6E;flex-shrink:0;margin-top:2px"></div>
+      <p style="font-size:13px;color:#333">Verificar se todos os alunos S1 estão com cobertura de profissional</p>
+    </div>
+
+    <div style="margin-bottom:6px"><strong style="font-size:13px;color:#1A3A6E">📅 Diariamente</strong></div>
+    <div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+      <div style="width:18px;height:18px;border-radius:4px;border:2px solid #1A3A6E;flex-shrink:0;margin-top:2px"></div>
+      <p style="font-size:13px;color:#333">Acessar o Painel Geral e verificar se há profissionais sem registro do dia</p>
+    </div>
+    <div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+      <div style="width:18px;height:18px;border-radius:4px;border:2px solid #1A3A6E;flex-shrink:0;margin-top:2px"></div>
+      <p style="font-size:13px;color:#333">Verificar alertas de cobertura/substituição</p>
+    </div>
+    <div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+      <div style="width:18px;height:18px;border-radius:4px;border:2px solid #1A3A6E;flex-shrink:0;margin-top:2px"></div>
+      <p style="font-size:13px;color:#333">Checar novas ocorrências críticas que precisam de assinatura</p>
+    </div>
+
+    <div style="margin-bottom:6px"><strong style="font-size:13px;color:#1A3A6E">📆 Semanalmente</strong></div>
+    <div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+      <div style="width:18px;height:18px;border-radius:4px;border:2px solid #1A3A6E;flex-shrink:0;margin-top:2px"></div>
+      <p style="font-size:13px;color:#333">Revisar o histórico de ocorrências e identificar padrões por aluno ou horário</p>
+    </div>
+    <div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+      <div style="width:18px;height:18px;border-radius:4px;border:2px solid #1A3A6E;flex-shrink:0;margin-top:2px"></div>
+      <p style="font-size:13px;color:#333">Confirmar com a secretaria que o arquivo físico está atualizado</p>
+    </div>
+  </div>
+
+  <div class="div" style="background:#1A3A6E"></div>
+
+  <div class="secao">
+    <div class="secao-label" style="color:#1A3A6E">Classificação de suporte</div>
+    <h2>Os três níveis de suporte dos alunos</h2>
+    <p class="secao-desc">Cada aluno tem um nível de suporte que orienta a intensidade do acompanhamento e a designação do profissional.</p>
+
+    <div class="cards cards-3">
+      <div class="card" style="background:#FFEBEE;border-top:4px solid #C62828">
+        <div style="font-size:28px;margin-bottom:8px">🔴</div>
+        <h3 style="color:#C62828">Suporte 1 (S1)</h3>
+        <p>Totalmente Dependente. Exige profissional exclusivo com presença integral no turno.</p>
+      </div>
+      <div class="card" style="background:#FFF3E0;border-top:4px solid #E65100">
+        <div style="font-size:28px;margin-bottom:8px">🟠</div>
+        <h3 style="color:#E65100">Suporte 2 (S2)</h3>
+        <p>Autonomia Limitada. Pode compartilhar profissional com outro aluno S2 na mesma turma, a critério da ETP.</p>
+      </div>
+      <div class="card" style="background:#E8F5E9;border-top:4px solid #2E7D32">
+        <div style="font-size:28px;margin-bottom:8px">🟢</div>
+        <h3 style="color:#2E7D32">Suporte 3 (S3)</h3>
+        <p>Autonomia Considerável. Pode ser atendido por profissional volante ou compartilhado entre turmas.</p>
+      </div>
+    </div>
+
+    <div class="alerta" style="background:#FFF8E1;border-left:4px solid #F57F17;margin-top:20px">
+      <div class="alerta-icon">⚠️</div>
+      <div><h4>Alteração de classificação</h4><p>Toda mudança de nível deve passar por avaliação da <strong>Equipe Técnico-Pedagógica (ETP)</strong>, deferimento da Direção e monitoramento da Secretaria Escolar.</p></div>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#1A3A6E,#2E75B6);border-radius:14px;padding:28px;text-align:center;color:#fff">
+    <p style="font-size:18px;font-weight:700;line-height:1.6">"A inclusão não é um favor, é um direito.<br>Nossa organização é a ferramenta que viabiliza esse direito."</p>
+    <p style="font-size:12px;opacity:.7;margin-top:10px">E.M. Regina Celi da Silva Cerdeira – Centro de Referência em Educação Inclusiva · 2026</p>
+  </div>
+
+</div><!-- fim dir -->
+
+
+<footer>
+  <h3 style="font-size:15px;font-weight:700;margin-bottom:6px">🏫 E.M. Regina Celi da Silva Cerdeira</h3>
+  <p>Centro de Referência em Educação Inclusiva · Duque de Caxias – RJ · 2026</p>
+  <p style="margin-top:6px;font-size:11px;opacity:.5">Tutorial Oficial da Plataforma de Acompanhamento da Inclusão · plataforma-inclusao-rcsc.vercel.app</p>
+</footer>
+
+<script>
+function mostrar(perfil) {
+  // Esconde todos
+  document.querySelectorAll('.conteudo').forEach(el => el.classList.remove('visivel'));
+  document.querySelectorAll('.perfil-btn').forEach(el => el.classList.remove('ativo'));
+
+  // Mostra o selecionado
+  document.getElementById('tut-' + perfil).classList.add('visivel');
+
+  // Destaca o botão ativo
+  const btns = document.querySelectorAll('.perfil-btn');
+  const idx = ['prof','sec','dir'].indexOf(perfil);
+  if (btns[idx]) btns[idx].classList.add('ativo');
+
+  // Scroll suave para o conteúdo
+  setTimeout(() => {
+    document.getElementById('tut-' + perfil)
+      .scrollIntoView({behavior:'smooth', block:'start'});
+  }, 100);
+}
+
+// Mostra profissional por padrão
+mostrar('prof');
+</script>
+</body>
+</html>

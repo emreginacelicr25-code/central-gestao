@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial — Central de Triagem, Impressão e Cotas · E.M. Regina Celi</title>
+<style>
+:root{--verde:#2a4f45;--verde2:#3a6b5e;--verde3:#eef3f0;--amarelo:#c98a1e;--vermelho:#b23a3a;--ink:#1a2238;--paper:#f7f4ec;--line:#d8d0bf}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* HEADER */
+header{background:var(--verde);color:#fff;padding:24px 20px;text-align:center}
+header h1{font-size:1.3rem;font-weight:700}
+header p{font-size:.85rem;opacity:.85;margin-top:4px}
+.links-header{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.link-btn{display:inline-block;background:rgba(255,255,255,.2);color:#fff;padding:8px 18px;border-radius:20px;font-weight:700;font-size:.85rem;text-decoration:none;border:1px solid rgba(255,255,255,.3)}
+.link-btn:hover{background:rgba(255,255,255,.3)}
+.link-btn.destaque{background:#fff;color:var(--verde)}
+
+main{max-width:820px;margin:0 auto;padding:24px 16px}
+
+/* ÍNDICE */
+.indice{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-bottom:28px}
+.indice h2{color:var(--verde);font-size:1rem;margin-bottom:14px;font-weight:700}
+.indice-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px}
+.indice a{color:var(--verde2);text-decoration:none;font-size:.88rem;padding:3px 0;display:block}
+.indice a:hover{text-decoration:underline}
+.indice-sep{grid-column:1/-1;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#99a;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+
+/* ALERTA */
+.alerta{display:flex;gap:10px;border-radius:8px;padding:12px 14px;margin:14px 0;font-size:.86rem;align-items:flex-start}
+.alerta .ai{font-size:1.1rem;flex-shrink:0}
+.alerta.info{background:#dbeafe;border:1px solid #93c5fd;color:#1e3a5f}
+.alerta.aviso{background:#fff8e1;border:1px solid #f0cc6e;color:#5a4200}
+.alerta.ok{background:#d1fae5;border:1px solid #6ee7b7;color:#064e3b}
+.alerta.erro{background:#fee2e2;border:1px solid #fca5a5;color:#7f1d1d}
+
+/* SEÇÕES */
+.secao{margin-bottom:32px;scroll-margin-top:20px}
+.secao-cab{display:flex;align-items:center;gap:12px;background:var(--verde);color:#fff;padding:14px 20px;border-radius:12px 12px 0 0}
+.secao-cab .ico{font-size:1.5rem}
+.secao-cab h2{font-size:1rem;font-weight:700}
+.secao-cab p{font-size:.78rem;opacity:.85;margin-top:2px}
+.secao-body{background:#fff;border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:20px 24px}
+
+/* PASSOS */
+.passos{display:flex;flex-direction:column;gap:0}
+.passo{display:flex;gap:14px;position:relative;padding-bottom:18px}
+.passo:last-child{padding-bottom:0}
+.passo-esq{display:flex;flex-direction:column;align-items:center}
+.passo-num{background:var(--verde2);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;flex-shrink:0}
+.passo-linha{width:2px;background:var(--line);flex:1;margin:4px 0}
+.passo:last-child .passo-linha{display:none}
+.passo-txt{padding-top:4px;flex:1}
+.passo-txt h4{font-size:.95rem;font-weight:700;color:var(--ink);margin-bottom:3px}
+.passo-txt p{font-size:.87rem;color:#445;line-height:1.6}
+.destaque{background:var(--verde3);border-left:3px solid var(--verde2);padding:7px 12px;border-radius:0 6px 6px 0;margin-top:8px;font-size:.84rem;color:var(--verde);font-weight:600}
+.cmd{background:#1a2238;color:#a8d8c8;padding:6px 12px;border-radius:6px;font-family:monospace;font-size:.85rem;margin-top:6px;display:block;word-break:break-all}
+
+/* CHIPS */
+.chip{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px;vertical-align:middle}
+.chip.alta{background:#fee2e2;color:var(--vermelho)}
+.chip.media{background:#fef3c7;color:#92400e}
+.chip.baixa{background:var(--verde3);color:var(--verde2)}
+.chip.cat{background:#e0e7ff;color:#3730a3}
+.chip.st{background:#f3f4f6;color:#374151}
+.chip.imp{background:#dbeafe;color:#1e40af}
+
+/* TABELAS */
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:12px 0}
+th{background:var(--verde3);color:var(--verde);text-align:left;padding:8px 12px;font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.4px}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+
+/* FLUXO */
+.fluxo{display:flex;flex-direction:column;gap:0}
+.fluxo-item{display:flex;gap:14px;position:relative;padding-bottom:20px}
+.fluxo-item:last-child{padding-bottom:0}
+.fluxo-circ{background:var(--verde2);color:#fff;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;box-shadow:0 2px 8px rgba(42,79,69,.3)}
+.fluxo-linha2{display:flex;flex-direction:column;align-items:center}
+.fluxo-traco{width:2px;background:var(--line);flex:1;margin:4px 0}
+.fluxo-item:last-child .fluxo-traco{display:none}
+.fluxo-txt{padding-top:6px;flex:1}
+.fluxo-txt h4{font-weight:700;font-size:.95rem}
+.fluxo-txt p{font-size:.84rem;color:#556;margin-top:3px}
+.fluxo-tempo{font-size:.75rem;color:var(--verde2);font-weight:700;margin-top:4px}
+
+/* CARDS DE SISTEMA */
+.sistemas{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.scard{background:var(--verde3);border:1px solid var(--verde2);border-radius:10px;padding:16px;text-align:center}
+.scard .sico{font-size:2rem;margin-bottom:6px}
+.scard h4{color:var(--verde);font-weight:700;font-size:.95rem;margin-bottom:4px}
+.scard p{font-size:.8rem;color:#556}
+.scard a{display:inline-block;margin-top:10px;background:var(--verde2);color:#fff;padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:700;text-decoration:none}
+
+/* TURMAS */
+.turno-bloco{margin-bottom:16px}
+.turno-titulo{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--verde);border-bottom:2px solid var(--verde3);padding-bottom:5px;margin-bottom:8px}
+.turmas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px}
+.turma-item{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:7px 10px;font-size:.8rem}
+.turma-item strong{display:block;color:var(--ink);font-size:.85rem}
+.turma-item span{color:#778}
+
+footer{text-align:center;padding:24px;font-size:.8rem;color:#99a;border-top:1px solid var(--line);margin-top:20px}
+@media(max-width:600px){
+  main{padding:14px 12px}
+  .secao-body{padding:16px}
+  .indice-grid{grid-template-columns:1fr}
+  .sistemas{grid-template-columns:1fr}
+  .turmas-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📋 Tutorial — Central de Triagem e Impressão</h1>
+  <p>Escola Municipal Regina Celi da Silva Cerdeira · Duque de Caxias / RJ<br>Guia completo para a equipe diretiva e secretaria</p>
+  <div class="links-header">
+    <a href="https://emreginacelicr25-code.github.io/rcsc-triagem" class="link-btn destaque" target="_blank">📋 Sistema de Triagem</a>
+    <a href="https://emreginacelicr25-code.github.io/rcsc-triagem/impressao.html" class="link-btn" target="_blank">🖨️ Fila de Impressão</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- ÍNDICE -->
+  <div class="indice">
+    <h2>📑 Índice</h2>
+    <div class="indice-grid">
+      <div class="indice-sep">Visão geral</div>
+      <a href="#sistemas">1. Os dois sistemas da escola</a>
+      <a href="#acesso">2. Como acessar</a>
+      <div class="indice-sep">Sistema de Triagem</div>
+      <a href="#painel">3. Aba Painel</a>
+      <a href="#importar">4. Aba Importar WhatsApp</a>
+      <a href="#registrar">5. Aba Registrar</a>
+      <a href="#documentos">6. Gerar documentos</a>
+      <a href="#automaticas">7. Mensagens automáticas</a>
+      <a href="#alunos">8. Aba Alunos</a>
+      <div class="indice-sep">Sistema de Impressão</div>
+      <a href="#fila">9. Fila de impressão</a>
+      <a href="#solicitar">10. Solicitar impressão</a>
+      <a href="#pastas">11. Pastas por turma</a>
+      <a href="#integracao">12. Triagem → Impressão</a>
+      <a href="#cotas">13. Cotas de impressão</a>
+      <div class="indice-sep">Referência</div>
+      <a href="#fluxo">14. Fluxo diário recomendado</a>
+      <a href="#urgencias">15. Guia de urgências e categorias</a>
+      <a href="#turmas">16. Lista completa de turmas</a>
+      <a href="#duvidas">17. Dúvidas frequentes</a>
+    </div>
+  </div>
+
+  <!-- 1. SISTEMAS -->
+  <div class="secao" id="sistemas">
+    <div class="secao-cab"><div class="ico">🏫</div><div><h2>1. Os dois sistemas da escola</h2><p>O que cada um faz e como se conectam</p></div></div>
+    <div class="secao-body">
+      <div class="sistemas">
+        <div class="scard">
+          <div class="sico">📋</div>
+          <h4>Central de Triagem</h4>
+          <p>Organiza as mensagens do WhatsApp, classifica demandas, gera documentos oficiais e envia comunicados.</p>
+          <a href="https://emreginacelicr25-code.github.io/rcsc-triagem" target="_blank">Acessar →</a>
+        </div>
+        <div class="scard">
+          <div class="sico">🖨️</div>
+          <h4>Fila de Impressão</h4>
+          <p>Recebe arquivos para impressão, organiza por turma e turno, controla a ordem de impressão.</p>
+          <a href="https://emreginacelicr25-code.github.io/rcsc-triagem/impressao.html" target="_blank">Acessar →</a>
+        </div>
+      </div>
+      <div class="alerta info"><div class="ai">🔗</div><div><strong>Como se conectam:</strong> quando uma professora solicita impressão pelo WhatsApp, a secretaria registra no sistema de triagem e pode enviar diretamente para a fila de impressão com um clique — sem precisar abrir o outro sistema.</div></div>
+      <div class="alerta ok"><div class="ai">☁️</div><div><strong>Todos os dados ficam salvos no Supabase</strong> — banco de dados em nuvem da escola. Nada se perde com troca de celular ou reinício do aparelho. Acessível de qualquer dispositivo com internet.</div></div>
+    </div>
+  </div>
+
+  <!-- 2. ACESSO -->
+  <div class="secao" id="acesso">
+    <div class="secao-cab"><div class="ico">🌐</div><div><h2>2. Como acessar os sistemas</h2><p>De qualquer aparelho, sem instalar nada</p></div></div>
+    <div class="secao-body">
+      <div class="passos">
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Abra o Chrome no celular, tablet ou computador</h4><p>Funciona em qualquer aparelho com Wi-Fi da escola ou dados móveis.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Digite o endereço na barra do navegador</h4>
+            <span class="cmd">emreginacelicr25-code.github.io/rcsc-triagem</span>
+            <span class="cmd">emreginacelicr25-code.github.io/rcsc-triagem/impressao.html</span>
+          </div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">3</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Verifique o indicador de conexão</h4><p>No cabeçalho verde deve aparecer <strong>● Online</strong>. Se aparecer <strong>● Offline</strong>, verifique a internet.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">4</div></div>
+          <div class="passo-txt"><h4>Salve nos favoritos</h4><p>No Chrome, toque nos 3 pontos → "Adicionar aos favoritos". No celular, pode também "Adicionar à tela inicial" para acessar como se fosse um app.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. PAINEL -->
+  <div class="secao" id="painel">
+    <div class="secao-cab"><div class="ico">📋</div><div><h2>3. Aba Painel</h2><p>Visão geral de todas as demandas — tela principal</p></div></div>
+    <div class="secao-body">
+      <div class="passos">
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Cartões de resumo no topo</h4>
+            <p><strong>Total</strong> — todas as demandas registradas<br>
+            <strong>Urgência alta</strong> — atenção imediata, em vermelho<br>
+            <strong>Atenção média</strong> — importantes, em amarelo<br>
+            <strong>Concluídos</strong> — já resolvidos, em verde</p>
+          </div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Demandas urgentes aparecem sempre primeiro</h4><p>O painel ordena automaticamente — urgência alta no topo, concluídos no final.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">3</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Use os filtros para encontrar demandas</h4><p>Filtre por urgência, status ou categoria. A barra de busca pesquisa por nome, texto ou turma.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">4</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Atualize o status de cada demanda</h4>
+            <p><span class="chip st">Aberto</span> → chegou, ainda não atendido<br>
+            <span class="chip st">Em andamento</span> → sendo tratado<br>
+            <span class="chip st">Concluído</span> → resolvido e encerrado</p>
+          </div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">5</div></div>
+          <div class="passo-txt"><h4>Abra o detalhe para editar e ver histórico</h4><p>Clique em <strong>📂 Detalhe</strong> para editar encaminhamentos, observações e ver todo o histórico de ações da demanda — status alterados, documentos gerados, envios para impressão.</p>
+            <div class="destaque">📄✓ — ícone que aparece quando a demanda já teve documento gerado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. IMPORTAR -->
+  <div class="secao" id="importar">
+    <div class="secao-cab"><div class="ico">📲</div><div><h2>4. Aba Importar WhatsApp</h2><p>Rotina principal — alimentar o sistema com as mensagens do dia</p></div></div>
+    <div class="secao-body">
+      <div class="alerta info"><div class="ai">💡</div><div>Esta é a aba mais usada no dia a dia. Você exporta as conversas do WhatsApp e o sistema classifica tudo automaticamente.</div></div>
+
+      <h3 style="font-size:.88rem;font-weight:700;color:var(--verde);margin:16px 0 10px">Parte 1 — Exportar do WhatsApp</h3>
+      <div class="passos">
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Abra a conversa ou grupo no WhatsApp</h4><p>Faça para cada conversa: WhatsApp institucional, grupos de turmas, grupo de professores, grupo de ASGs etc.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Toque no nome no topo → Exportar conversa</h4><p>Escolha <strong>Sem mídia</strong>. O arquivo .txt vai para a pasta Downloads do celular.</p></div>
+        </div>
+      </div>
+
+      <h3 style="font-size:.88rem;font-weight:700;color:var(--verde);margin:16px 0 10px">Parte 2 — Importar no sistema</h3>
+      <div class="passos">
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">3</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Defina o período a importar</h4><p>Toque em <strong>📅 Hoje</strong> ou <strong>📅 Última semana</strong> para filtrar só mensagens recentes. Evita importar histórico antigo desnecessariamente.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">4</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Confira o remetente da escola</h4><p>O campo <strong>"Remetente da escola"</strong> já vem preenchido com <em>Escola Municipal Regina Celi da Silva Cerdeira</em>. As mensagens enviadas por esse nome serão ignoradas automaticamente.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">5</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Selecione o arquivo .txt</h4><p>Toque na área de upload e navegue até a pasta Downloads. O sistema lê e classifica todas as mensagens automaticamente.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">6</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Junte mensagens fragmentadas</h4><p>Quando um responsável envia a mesma conversa em várias mensagens separadas, marque todas e clique em <strong>🔗 Juntar selecionadas</strong>. O sistema une os textos em ordem cronológica e reclassifica.</p>
+            <div class="destaque">💡 Isso é comum no WhatsApp — as pessoas enviam um parágrafo por mensagem.</div>
+          </div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">7</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Revise as classificações</h4><p>Cada mensagem aparece com categoria e urgência sugeridas. Você pode corrigir antes de salvar usando os seletores em cada cartão.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">8</div></div>
+          <div class="passo-txt"><h4>Salve as demandas selecionadas</h4><p>Use <strong>☑ Todas</strong>, <strong>🔴 Só urgentes</strong> ou marque individualmente. Clique em <strong>💾 Salvar selecionadas no banco</strong>.</p>
+            <div class="alerta aviso" style="margin-top:8px"><div class="ai">⚠️</div><div>Mensagens de "bom dia", "obrigada" ou confirmações simples não precisam ser salvas. Desmarque antes de salvar.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. REGISTRAR -->
+  <div class="secao" id="registrar">
+    <div class="secao-cab"><div class="ico">✏️</div><div><h2>5. Aba Registrar</h2><p>Para situações pontuais e urgentes</p></div></div>
+    <div class="secao-body">
+      <p style="font-size:.88rem;color:#445;margin-bottom:14px">Use quando precisar registrar uma demanda na hora — atendimento presencial, ligação telefônica ou situação urgente sem precisar exportar o WhatsApp.</p>
+      <div class="passos">
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Preencha o autor e a origem</h4><p>Nome do responsável ou professora e de onde veio (ex: WhatsApp institucional, presencial).</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Cole ou digite o texto</h4><p>Pode copiar do WhatsApp e colar, ou digitar um resumo do que foi comunicado.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">3</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Clique em "🤖 Classificar auto"</h4><p>O sistema sugere categoria e urgência com base no texto. Ajuste se necessário.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">4</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Vincule a um aluno (opcional)</h4><p>Digite o nome do aluno — o sistema busca automaticamente no cadastro e preenche a turma.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">5</div></div>
+          <div class="passo-txt"><h4>Clique em "💾 Salvar demanda"</h4><p>A demanda vai direto para o Painel salva no banco.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. DOCUMENTOS -->
+  <div class="secao" id="documentos">
+    <div class="secao-cab"><div class="ico">📄</div><div><h2>6. Gerar documentos e fichas</h2><p>Com papel timbrado oficial — brasão da Prefeitura de Duque de Caxias</p></div></div>
+    <div class="secao-body">
+      <table>
+        <tr><th>Categoria</th><th>Documento gerado</th></tr>
+        <tr><td><span class="chip cat">Registro pedagógico</span></td><td>Registro Pedagógico de Ocorrência</td></tr>
+        <tr><td><span class="chip cat">Reclamação/Queixa</span></td><td>Registro de Atendimento</td></tr>
+        <tr><td><span class="chip cat">Agendamento</span></td><td>Ficha de Agendamento</td></tr>
+        <tr><td><span class="chip cat">Solicitação de material</span></td><td>Solicitação de Material e Reprografia</td></tr>
+        <tr><td><span class="chip cat">Aula passeio</span></td><td>Autorização de Aula Passeio</td></tr>
+      </table>
+      <div class="passos" style="margin-top:16px">
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>No Painel, clique em "📄 Gerar doc"</h4><p>Aparece nas demandas das categorias acima. A ficha abre com os dados já preenchidos automaticamente.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Edite os campos necessários</h4><p>Toque em qualquer campo para digitar. Os campos ficam com borda verde ao serem ativados. Todos os campos são editáveis — encaminhamentos, datas, nomes.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">3</div></div>
+          <div class="passo-txt"><h4>Imprima ou salve em PDF</h4><p>Clique em <strong>🖨 Imprimir / PDF</strong>. Escolha "Salvar como PDF" para guardar o arquivo.</p>
+            <div class="destaque">O sistema registra automaticamente no banco que o documento foi gerado, com data e hora. A demanda fica marcada com 📄✓.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. AUTOMÁTICAS -->
+  <div class="secao" id="automaticas">
+    <div class="secao-cab"><div class="ico">📢</div><div><h2>7. Aba Mensagens automáticas</h2><p>18 modelos prontos para copiar e colar no WhatsApp</p></div></div>
+    <div class="secao-body">
+      <table>
+        <tr><th>Modelo</th><th>Quando usar</th></tr>
+        <tr><td>🚌 Aula passeio</td><td>Comunicar saída pedagógica com detalhes</td></tr>
+        <tr><td>🚑 Intercorrência na rotina</td><td>Avisar responsável sobre incidente com aluno</td></tr>
+        <tr><td>⚠️ Suspensão — ato fortuito</td><td>Falta de água, luz, problemas estruturais</td></tr>
+        <tr><td>⚠️ Suspensão — ausência da professora</td><td>Já inclui aviso legal de reposição obrigatória</td></tr>
+        <tr><td>🚌 Ausência de transporte</td><td>Notifica famílias e registra responsabilidade da empresa</td></tr>
+        <tr><td>✅ Confirmando justificativa de falta</td><td>Lembra que falta justificada ainda é computada</td></tr>
+        <tr><td>📝 Registro incompleto</td><td>Pede ao professor que complete o relato</td></tr>
+        <tr><td>📋 Pendência de transferência</td><td>Chama responsável para formalizar transferência</td></tr>
+        <tr><td>📊 Faltas acumuladas</td><td>Comunicado formal com base legal (LDB + ECA)</td></tr>
+        <tr><td>🔍 Busca ativa</td><td>Falta injustificada com prazo para regularização</td></tr>
+        <tr><td>📅 Aulas acontecem normalmente</td><td>Resposta padrão para quem sempre pergunta</td></tr>
+        <tr><td>📌 Reunião de pais</td><td>Lembrete de reunião com pauta</td></tr>
+        <tr><td>📄 Histórico / Declaração escolar</td><td>Avisar que documento está disponível</td></tr>
+        <tr><td>✏️ Solicitação de material</td><td>Lista de materiais para a turma</td></tr>
+        <tr><td>📅 Feriado / recesso</td><td>Com observação sobre reposição quando necessário</td></tr>
+        <tr><td>✅ Confirmação de agendamento</td><td>Confirmar reunião marcada</td></tr>
+        <tr><td>📋 Orientação Bolsa Família</td><td>Alertar sobre frequência mínima para manutenção</td></tr>
+        <tr><td>🎉 Evento escolar</td><td>Convite para evento com detalhes</td></tr>
+      </table>
+      <div class="passos" style="margin-top:16px">
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Escolha o modelo e edite os [colchetes]</h4><p>Toque na área de texto e substitua os campos marcados com <strong>[COLCHETES]</strong> pelas informações específicas.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">2</div></div>
+          <div class="passo-txt"><h4>Clique em "📋 Copiar mensagem"</h4><p>Cole direto no grupo ou conversa do WhatsApp desejado.</p>
+            <div class="alerta aviso"><div class="ai">⚠️</div><div>Os modelos de suspensão de aulas já incluem o aviso legal de reposição obrigatória. Não remova esse trecho.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. ALUNOS -->
+  <div class="secao" id="alunos">
+    <div class="secao-cab"><div class="ico">👨‍🎓</div><div><h2>8. Aba Alunos</h2><p>Cadastro para agilizar o registro de demandas</p></div></div>
+    <div class="secao-body">
+      <p style="font-size:.88rem;color:#445;margin-bottom:14px">Cadastre os alunos uma vez. Ao registrar demandas, basta digitar o nome e o sistema preenche turma e dados automaticamente.</p>
+      <div class="passos">
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Preencha nome, turma, turno, matrícula e responsável</h4><p>O telefone do responsável fica disponível ao abrir qualquer demanda vinculada ao aluno.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">2</div></div>
+          <div class="passo-txt"><h4>Clique em "💾 Cadastrar aluno"</h4><p>Fica salvo permanentemente. Recomendamos cadastrar no início do ano os alunos com demandas recorrentes.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. FILA -->
+  <div class="secao" id="fila">
+    <div class="secao-cab"><div class="ico">🖨️</div><div><h2>9. Fila de impressão — visão da secretaria</h2><p>Controle de todas as solicitações em ordem de chegada</p></div></div>
+    <div class="secao-body">
+      <div class="passos">
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Acesse a fila de impressão</h4>
+            <span class="cmd">emreginacelicr25-code.github.io/rcsc-triagem/impressao.html</span>
+            <p style="margin-top:6px">As solicitações aparecem em ordem de chegada — a mais antiga primeiro.</p>
+          </div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Entenda os status da fila</h4>
+            <p><span class="chip imp">⏳ Aguardando</span> → na fila, aguardando ser impressa<br>
+            <span class="chip imp">🖨️ Imprimindo</span> → sendo impressa agora<br>
+            <span class="chip st">✅ Concluído</span> → já foi impressa</p>
+          </div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">3</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Baixe o arquivo e imprima</h4><p>Clique em <strong>⬇️ Baixar arquivo</strong> para abrir o PDF ou Word. Após iniciar, clique em <strong>🖨️ Iniciar impressão</strong>.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">4</div></div>
+          <div class="passo-txt"><h4>Marque como concluído</h4><p>Após imprimir, clique em <strong>✅ Concluir</strong>. A solicitação fica arquivada com data e hora da impressão.</p>
+            <div class="destaque">A fila atualiza automaticamente a cada 60 segundos. Use o botão ↺ Atualizar para forçar a atualização.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. SOLICITAR -->
+  <div class="secao" id="solicitar">
+    <div class="secao-cab"><div class="ico">📤</div><div><h2>10. Solicitar impressão</h2><p>Como enviar um arquivo para a fila</p></div></div>
+    <div class="secao-body">
+      <p style="font-size:.88rem;color:#445;margin-bottom:14px">Qualquer membro da equipe pode enviar arquivos diretamente pela aba <strong>📤 Nova solicitação</strong> no sistema de impressão.</p>
+      <div class="passos">
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Selecione o professor(a) e a turma</h4><p>Ao escolher o professor, o sistema filtra automaticamente as turmas dele. Informe a quantidade de cópias.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Faça upload do arquivo</h4><p>Aceita <strong>PDF, Word (.docx) e imagens (foto pelo celular)</strong>. Tamanho máximo: 10MB. Pode arrastar ou tocar na área de upload.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">3</div></div>
+          <div class="passo-txt"><h4>Clique em "📤 Enviar para fila"</h4><p>A solicitação entra na fila na ordem de chegada. A secretaria verá na aba Fila de impressão.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. PASTAS -->
+  <div class="secao" id="pastas">
+    <div class="secao-cab"><div class="ico">📁</div><div><h2>11. Pastas por turma</h2><p>Todos os arquivos organizados por turma e turno</p></div></div>
+    <div class="secao-body">
+      <p style="font-size:.88rem;color:#445;margin-bottom:14px">A aba <strong>📁 Pastas por turma</strong> mostra uma pasta para cada turma da escola. Ao abrir, você vê todos os arquivos enviados para aquela turma com botão de download e impressão.</p>
+      <div class="alerta info"><div class="ai">📁</div><div>Pastas com arquivos aguardando mostram o número em destaque. Pastas vazias aparecem com o aviso "Vazia".</div></div>
+      <p style="font-size:.87rem;color:#445;margin-top:12px">Use a barra de busca para filtrar por número de turma ou nome de professor.</p>
+    </div>
+  </div>
+
+  <!-- 12. INTEGRAÇÃO -->
+  <div class="secao" id="integracao">
+    <div class="secao-cab"><div class="ico">🔗</div><div><h2>12. Triagem → Impressão</h2><p>Como enviar uma solicitação diretamente do sistema de triagem</p></div></div>
+    <div class="secao-body">
+      <p style="font-size:.88rem;color:#445;margin-bottom:14px">Quando uma professora envia uma mensagem de <strong>solicitação de material ou cópias</strong> pelo WhatsApp, você pode enviar para a fila de impressão sem sair do sistema de triagem.</p>
+      <div class="passos">
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>No Painel, localize a demanda de "Solicitação de material/cópias"</h4><p>Essas demandas têm o botão <span class="chip imp">🖨️ Enviar p/ impressão</span> na linha de ações.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Clique em "🖨️ Enviar p/ impressão"</h4><p>Abre um formulário já preenchido com os dados da demanda — nome do professor, turma e descrição do material.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">3</div><div class="passo-linha"></div></div>
+          <div class="passo-txt"><h4>Confirme ou ajuste os dados</h4><p>Informe quantidade de cópias, frente/verso, colorido e observações. Selecione a turma de destino.</p></div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">4</div></div>
+          <div class="passo-txt"><h4>Clique em "🖨️ Enviar para fila"</h4><p>A solicitação entra automaticamente na fila de impressão. A demanda no triagem muda para <strong>Em andamento</strong> e o histórico registra o envio com data e hora.</p>
+            <div class="destaque">O arquivo do professor precisa ser recebido separadamente (pelo WhatsApp) e enviado pela aba "Nova solicitação" no sistema de impressão.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13. COTAS -->
+  <div class="secao" id="cotas">
+    <div class="secao-cab"><div class="ico">📊</div><div><h2>13. Cotas de impressão</h2><p>Controle de folhas por turma com semáforo automático</p></div></div>
+    <div class="secao-body">
+      <p style="font-size:.88rem;color:#445;margin-bottom:14px">A escola tem <strong>10.000 folhas A4 por trimestre</strong>. O sistema distribui cotas por turma proporcionalmente ao número de alunos e monitora o uso automaticamente.</p>
+
+      <table>
+        <tr><th>Tipo de turma</th><th>Cota / trimestre</th><th>Turmas</th></tr>
+        <tr><td>Ed. Infantil e Ensino Fundamental</td><td><strong>300 folhas</strong></td><td>41, 42, 51, 52, 101–502</td></tr>
+        <tr><td>Classes DI (até 12 alunos)</td><td><strong>150 folhas</strong></td><td>2001, 2003, 2005, 2006</td></tr>
+        <tr><td>Classes Especiais menores (5–8 alunos)</td><td><strong>80 folhas</strong></td><td>2002, 2004, 2007</td></tr>
+        <tr><td>AEE / Sala de Recursos</td><td><strong>50 folhas</strong></td><td>1001–1009</td></tr>
+        <tr><td>Extraclasse</td><td><strong>60 folhas</strong></td><td>Ed. Física, Artes, Informática, Prosa</td></tr>
+      </table>
+
+      <div style="margin-top:16px;margin-bottom:12px;font-size:.88rem;font-weight:700;color:var(--verde)">🚦 Semáforo automático</div>
+      <table>
+        <tr><th>Cor</th><th>% da cota usada</th><th>O que significa</th></tr>
+        <tr><td>🟢 <strong>Normal</strong></td><td>Até 50%</td><td>Uso dentro do esperado, sem preocupação</td></tr>
+        <tr><td>🟡 <strong>Médio</strong></td><td>50% a 80%</td><td>Atenção — mais da metade da cota consumida</td></tr>
+        <tr><td>🔴 <strong>Alto</strong></td><td>80% a 90%</td><td>Alerta — poucos recursos restantes no trimestre</td></tr>
+        <tr><td>⛔ <strong>Crítico</strong></td><td>Acima de 90%</td><td>Cota quase esgotada — avaliar novas solicitações</td></tr>
+      </table>
+
+      <div class="alerta aviso" style="margin-top:14px"><div class="ai">⚠️</div><div>As cotas só contam folhas de impressões <strong>marcadas como concluídas</strong>. Solicitações aguardando ou canceladas não entram no cálculo.</div></div>
+
+      <div style="margin-top:16px;font-size:.88rem;font-weight:700;color:var(--verde);margin-bottom:10px">Onde ver as cotas</div>
+
+      <div class="passos">
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">1</div><div class="passo-linha"></div></div>
+          <div class="passo-txt">
+            <h4>No sistema de triagem — mini painel no topo do Painel</h4>
+            <p>Aparece automaticamente mostrando o total geral do trimestre, percentual usado e quais turmas estão em alerta. Tem um link direto para a fila de impressão.</p>
+          </div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">2</div><div class="passo-linha"></div></div>
+          <div class="passo-txt">
+            <h4>Na fila de impressão — aba 📊 Cotas de impressão</h4>
+            <p>Painel completo com um card por turma mostrando barra de progresso colorida, folhas usadas, cota total e restante. Filtre por status do semáforo para ver só as turmas em alerta.</p>
+            <div class="destaque">Use o seletor de trimestre (1º, 2º ou 3º) para consultar o histórico de períodos anteriores.</div>
+          </div>
+        </div>
+        <div class="passo">
+          <div class="passo-esq"><div class="passo-num">3</div></div>
+          <div class="passo-txt">
+            <h4>Como usar na prática</h4>
+            <p>Antes de aprovar uma solicitação de impressão volumosa, verifique a cota da turma. Se estiver no 🔴 Alto ou ⛔ Crítico, converse com a professora sobre priorizar o material mais essencial ou aguardar o próximo trimestre.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 14. FLUXO DIÁRIO -->
+  <div class="secao" id="fluxo">
+    <div class="secao-cab"><div class="ico">🔄</div><div><h2>14. Fluxo diário recomendado</h2><p>Como usar os sistemas na rotina da escola</p></div></div>
+    <div class="secao-body">
+      <div class="fluxo">
+        <div class="fluxo-item">
+          <div class="fluxo-linha2"><div class="fluxo-circ">☀️</div><div class="fluxo-traco"></div></div>
+          <div class="fluxo-txt"><h4>Início do expediente</h4><p>Abra o sistema de triagem e verifique o Painel. Veja demandas de urgência alta em aberto do dia anterior.</p><div class="fluxo-tempo">⏱ 2 minutos</div></div>
+        </div>
+        <div class="fluxo-item">
+          <div class="fluxo-linha2"><div class="fluxo-circ">📲</div><div class="fluxo-traco"></div></div>
+          <div class="fluxo-txt"><h4>Exportar e importar as conversas</h4><p>Exporte o WhatsApp institucional e grupos principais. Importe com filtro "Hoje". Junte fragmentadas, classifique e salve.</p><div class="fluxo-tempo">⏱ 10 minutos</div></div>
+        </div>
+        <div class="fluxo-item">
+          <div class="fluxo-linha2"><div class="fluxo-circ">📄</div><div class="fluxo-traco"></div></div>
+          <div class="fluxo-txt"><h4>Gerar documentos prioritários</h4><p>Para reclamações, registros pedagógicos e agendamentos — gere a ficha, edite, imprima ou salve em PDF.</p><div class="fluxo-tempo">⏱ 5 min por documento</div></div>
+        </div>
+        <div class="fluxo-item">
+          <div class="fluxo-linha2"><div class="fluxo-circ">🖨️</div><div class="fluxo-traco"></div></div>
+          <div class="fluxo-txt"><h4>Processar fila de impressão</h4><p>Acesse o sistema de impressão, baixe os arquivos na ordem da fila e imprima. Marque como concluído após cada impressão.</p><div class="fluxo-tempo">⏱ conforme a fila</div></div>
+        </div>
+        <div class="fluxo-item">
+          <div class="fluxo-linha2"><div class="fluxo-circ">✅</div><div class="fluxo-traco"></div></div>
+          <div class="fluxo-txt"><h4>Atualizar status das demandas</h4><p>Conforme os atendimentos acontecem, atualize para "Em andamento" ou "Concluído".</p><div class="fluxo-tempo">⏱ 1 min por demanda</div></div>
+        </div>
+        <div class="fluxo-item">
+          <div class="fluxo-linha2"><div class="fluxo-circ">📢</div><div class="fluxo-traco"></div></div>
+          <div class="fluxo-txt"><h4>Enviar comunicados</h4><p>Use a aba Mensagens automáticas para informes, confirmações de agendamento ou avisos de suspensão de aulas.</p><div class="fluxo-tempo">⏱ 2 min por comunicado</div></div>
+        </div>
+        <div class="fluxo-item">
+          <div class="fluxo-linha2"><div class="fluxo-circ">🌙</div></div>
+          <div class="fluxo-txt"><h4>Encerramento</h4><p>Verifique demandas urgentes em aberto. Registre encaminhamentos pendentes antes de encerrar o dia.</p><div class="fluxo-tempo">⏱ 5 minutos</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 15. URGÊNCIAS -->
+  <div class="secao" id="urgencias">
+    <div class="secao-cab"><div class="ico">🏷️</div><div><h2>15. Guia de urgências e categorias</h2></div></div>
+    <div class="secao-body">
+      <table>
+        <tr><th>Urgência</th><th>Quando usar</th><th>Exemplos</th></tr>
+        <tr><td><span class="chip alta">🔴 Alta</span></td><td>Mesmo dia</td><td>Reclamação grave, busca ativa, acidente, queixa de violência</td></tr>
+        <tr><td><span class="chip media">🟡 Média</span></td><td>Até 2 dias</td><td>Agendamento, registro pedagógico, demanda administrativa</td></tr>
+        <tr><td><span class="chip baixa">🟢 Baixa</span></td><td>Sem urgência</td><td>Justificativa de falta, solicitação de material, informação geral</td></tr>
+      </table>
+      <table style="margin-top:14px">
+        <tr><th>Categoria</th><th>Tipo de mensagem</th></tr>
+        <tr><td><span class="chip cat">Registro pedagógico</span></td><td>Ocorrências em sala, acidentes, comportamento, relatos de professoras</td></tr>
+        <tr><td><span class="chip cat">Reclamação/Queixa</span></td><td>Insatisfação de responsáveis, denúncias, pedidos de providência</td></tr>
+        <tr><td><span class="chip cat">Agendamento</span></td><td>Pedidos de reunião com coordenação ou direção</td></tr>
+        <tr><td><span class="chip cat">Solicitação de material</span></td><td>Pedidos de cópias, impressões, atividades para impressão</td></tr>
+        <tr><td><span class="chip cat">Justificativa de falta</span></td><td>Avisos de ausência, atestados, consultas médicas</td></tr>
+        <tr><td><span class="chip cat">Demanda administrativa</span></td><td>Matrícula, transferência, declaração, histórico escolar</td></tr>
+        <tr><td><span class="chip cat">Aula passeio</span></td><td>Organização de atividades externas, autorizações</td></tr>
+        <tr><td><span class="chip cat">Busca ativa</span></td><td>Faltas injustificadas, evasão, contato com Conselho Tutelar</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 16. TURMAS -->
+  <div class="secao" id="turmas">
+    <div class="secao-cab"><div class="ico">🏫</div><div><h2>16. Lista completa de turmas</h2><p>Professoras regentes por turma e turno</p></div></div>
+    <div class="secao-body">
+      <div class="turno-bloco">
+        <div class="turno-titulo">☀️ Turno da Manhã — 8h às 12h</div>
+        <div class="turmas-grid">
+          <div class="turma-item"><strong>Turma 41</strong><span>Ed. Infantil · Profª Marcelle</span></div>
+          <div class="turma-item"><strong>Turma 51</strong><span>Ed. Infantil · Profª Simone</span></div>
+          <div class="turma-item"><strong>Turma 101</strong><span>1º Ano · Profª Anatália</span></div>
+          <div class="turma-item"><strong>Turma 201</strong><span>2º Ano · Profª Flávia</span></div>
+          <div class="turma-item"><strong>Turma 202</strong><span>2º Ano · Profª Rosemere</span></div>
+          <div class="turma-item"><strong>Turma 301</strong><span>3º Ano · Profª Luciane</span></div>
+          <div class="turma-item"><strong>Turma 401</strong><span>4º Ano · Profª Patrícia</span></div>
+          <div class="turma-item"><strong>Turma 501</strong><span>5º Ano · Profª Haylane</span></div>
+          <div class="turma-item"><strong>Turma 2001</strong><span>Cl. Especial · Profª Elaine</span></div>
+          <div class="turma-item"><strong>Turma 2002</strong><span>Cl. Especial · Sem prof.</span></div>
+          <div class="turma-item"><strong>Turma 2003</strong><span>Cl. Especial · Profª Elisangela</span></div>
+          <div class="turma-item"><strong>Turma 2004</strong><span>Cl. Especial · Sem prof.</span></div>
+        </div>
+      </div>
+      <div class="turno-bloco">
+        <div class="turno-titulo">🌤️ Turno da Tarde — 13h às 17h</div>
+        <div class="turmas-grid">
+          <div class="turma-item"><strong>Turma 42</strong><span>Ed. Infantil · Profª Thayane</span></div>
+          <div class="turma-item"><strong>Turma 52</strong><span>Ed. Infantil · Profª Simone</span></div>
+          <div class="turma-item"><strong>Turma 102</strong><span>1º Ano · Profª Anatália</span></div>
+          <div class="turma-item"><strong>Turma 103</strong><span>1º Ano · Profª Marcelle</span></div>
+          <div class="turma-item"><strong>Turma 203</strong><span>2º Ano · Profª Marilene</span></div>
+          <div class="turma-item"><strong>Turma 302</strong><span>3º Ano · Profª Elisangela</span></div>
+          <div class="turma-item"><strong>Turma 402</strong><span>4º Ano · Profª Rosemere</span></div>
+          <div class="turma-item"><strong>Turma 502</strong><span>5º Ano · Profª Liliana</span></div>
+          <div class="turma-item"><strong>Turma 2005</strong><span>Cl. Especial · Profª Hanna</span></div>
+          <div class="turma-item"><strong>Turma 2006</strong><span>Cl. Especial · Profª Luciane</span></div>
+          <div class="turma-item"><strong>Turma 2007</strong><span>Cl. Especial · Profª Haylane</span></div>
+        </div>
+      </div>
+      <div class="turno-bloco">
+        <div class="turno-titulo">♿ AEE — Sala de Recursos</div>
+        <div class="turmas-grid">
+          <div class="turma-item"><strong>1001 · 1002 · 1003 · 1004</strong><span>Profª Hilda</span></div>
+          <div class="turma-item"><strong>1005 · 1006</strong><span>Profª Daniele</span></div>
+          <div class="turma-item"><strong>1007 · 1008 · 1009</strong><span>Profª Bianca</span></div>
+        </div>
+      </div>
+      <div class="turno-bloco">
+        <div class="turno-titulo">🎨 Extraclasse</div>
+        <div class="turmas-grid">
+          <div class="turma-item"><strong>Ed. Física</strong><span>Prof. Wallace / Profª Amanda</span></div>
+          <div class="turma-item"><strong>Artes</strong><span>Profª Mel</span></div>
+          <div class="turma-item"><strong>Informática</strong><span>Prof. Cláudio / Profª Luciana</span></div>
+          <div class="turma-item"><strong>Projetos (Prosa)</strong><span>Profª Anna Carolina</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 17. DÚVIDAS -->
+  <div class="secao" id="duvidas">
+    <div class="secao-cab"><div class="ico">❓</div><div><h2>17. Dúvidas frequentes</h2></div></div>
+    <div class="secao-body">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="border-bottom:1px solid var(--line);padding-bottom:14px">
+          <h4 style="font-size:.92rem;color:var(--verde);margin-bottom:4px">O sistema ficou offline. Os dados foram perdidos?</h4>
+          <p style="font-size:.86rem;color:#445">Não. Todos os dados ficam salvos no Supabase. Quando a conexão voltar, o sistema carrega tudo normalmente.</p>
+        </div>
+        <div style="border-bottom:1px solid var(--line);padding-bottom:14px">
+          <h4 style="font-size:.92rem;color:var(--verde);margin-bottom:4px">Importei a mesma conversa duas vezes. Vai duplicar?</h4>
+          <p style="font-size:.86rem;color:#445">Não. O sistema verifica duplicatas automaticamente antes de salvar.</p>
+        </div>
+        <div style="border-bottom:1px solid var(--line);padding-bottom:14px">
+          <h4 style="font-size:.92rem;color:var(--verde);margin-bottom:4px">A classificação automática errou. Posso corrigir?</h4>
+          <p style="font-size:.86rem;color:#445">Sim, sempre — tanto na tela de importação quanto no Detalhe da demanda no Painel.</p>
+        </div>
+        <div style="border-bottom:1px solid var(--line);padding-bottom:14px">
+          <h4 style="font-size:.92rem;color:var(--verde);margin-bottom:4px">Onde ficam salvos os documentos gerados?</h4>
+          <p style="font-size:.86rem;color:#445">O sistema registra que o documento foi gerado (data e hora), mas o arquivo PDF precisa ser salvo manualmente pelo botão "Imprimir / PDF" → "Salvar como PDF".</p>
+        </div>
+        <div style="border-bottom:1px solid var(--line);padding-bottom:14px">
+          <h4 style="font-size:.92rem;color:var(--verde);margin-bottom:4px">Posso acessar de vários aparelhos ao mesmo tempo?</h4>
+          <p style="font-size:.86rem;color:#445">Sim. Direção, secretaria e coordenação podem acessar simultaneamente — todos veem os mesmos dados em tempo real.</p>
+        </div>
+        <div style="border-bottom:1px solid var(--line);padding-bottom:14px">
+          <h4 style="font-size:.92rem;color:var(--verde);margin-bottom:4px">Como funciona a fila de impressão? A ordem muda?</h4>
+          <p style="font-size:.86rem;color:#445">A ordem é por chegada — quem enviou primeiro é impresso primeiro. A ordem só muda se uma solicitação for cancelada.</p>
+        </div>
+        <div style="border-bottom:1px solid var(--line);padding-bottom:14px">
+          <h4 style="font-size:.92rem;color:var(--verde);margin-bottom:4px">O professor precisa ter acesso ao sistema para solicitar impressão?</h4>
+          <p style="font-size:.86rem;color:#445">Não necessariamente. A secretaria pode fazer a solicitação no lugar do professor após receber o arquivo pelo WhatsApp. Mas se o professor tiver acesso, pode solicitar direto pelo link da fila de impressão.</p>
+        </div>
+        <div style="border-bottom:1px solid var(--line);padding-bottom:14px">
+          <h4 style="font-size:.92rem;color:var(--verde);margin-bottom:4px">A cota de uma turma foi atingida. A impressão é bloqueada automaticamente?</h4>
+          <p style="font-size:.86rem;color:#445">Não. O sistema avisa com o semáforo vermelho/crítico, mas não bloqueia automaticamente — a decisão é da gestão. Isso é intencional para dar flexibilidade em casos urgentes.</p>
+        </div>
+        <div style="border-bottom:1px solid var(--line);padding-bottom:14px">
+          <h4 style="font-size:.92rem;color:var(--verde);margin-bottom:4px">As cotas se reiniciam automaticamente a cada trimestre?</h4>
+          <p style="font-size:.86rem;color:#445">Sim. O sistema calcula as cotas por período trimestral automaticamente — 1º trimestre (jan–abr), 2º (mai–ago) e 3º (set–dez). Ao virar o trimestre, o contador zera e começa do zero.</p>
+        </div>
+        <div style="border-bottom:1px solid var(--line);padding-bottom:14px">
+          <h4 style="font-size:.92rem;color:var(--verde);margin-bottom:4px">Posso consultar o consumo de trimestres anteriores?</h4>
+          <p style="font-size:.86rem;color:#445">Sim. Na aba 📊 Cotas de impressão da fila de impressão, use o seletor de trimestre para ver o histórico de qualquer período do ano.</p>
+        </div>
+        <div>
+          <h4 style="font-size:.92rem;color:var(--verde);margin-bottom:4px">Como exporto os dados para Excel?</h4>
+          <p style="font-size:.86rem;color:#445">Acesse supabase.com → projeto rcsc-triagem → Table Editor → tabela "demandas" ou "impressoes" → Export → CSV. Abre direto no Excel.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Central de Triagem e Impressão · E.M. Regina Celi da Silva Cerdeira · Duque de Caxias / RJ<br>
+  Sistema desenvolvido com Claude AI · Uso interno exclusivo · 2026
+</footer>
+
+</body>
+</html>
